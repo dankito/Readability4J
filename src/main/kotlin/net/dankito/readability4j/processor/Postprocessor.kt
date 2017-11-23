@@ -105,16 +105,16 @@ open class Postprocessor {
      */
     protected open fun cleanIDsAndClasses(node: Element, classesToPreserve: Set<String>) {
         if(IDS_TO_PRESERVE.contains(node.id()) == false) {
-            node.removeAttr("id");
+            node.removeAttr("id")
         }
 
         val classNames = node.classNames().filter { classesToPreserve.contains(it) }
 
         if(classNames.isNotEmpty()) {
-            node.classNames(classNames.toMutableSet());
+            node.classNames(classNames.toMutableSet())
         }
         else {
-            node.removeAttr("class");
+            node.removeAttr("class")
         }
 
         node.children().forEach { child ->
