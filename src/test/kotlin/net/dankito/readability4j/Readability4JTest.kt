@@ -461,6 +461,10 @@ open class Readability4JTest {
 
         val expectedByline = testData.expectedMetadata.byline?.let { regEx.normalize(it) } // Readability doesn't normalize byline but we do
         assert(expectedByline == article.byline) { "Byline doesn't match\n\nExpected:\n${expectedByline}\n\nActual:\n${article.byline}" }
+
+        if(testData.expectedMetadata.dir != null) {
+            assert(testData.expectedMetadata.dir == article.dir) { "Dir doesn't match\n\nExpected:\n${testData.expectedMetadata.dir}\n\nActual:\n${article.dir}" }
+        }
     }
 
     private fun fixExcerptForSomeTestCases(testData: PageTestData, excerpt: String?): String? {
