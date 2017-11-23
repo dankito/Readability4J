@@ -2,6 +2,7 @@ package net.dankito.readability4j.processor
 
 import net.dankito.readability4j.model.ArticleGrabberOptions
 import net.dankito.readability4j.model.ReadabilityObject
+import net.dankito.readability4j.model.ReadabilityOptions
 import net.dankito.readability4j.util.RegExUtil
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -12,21 +13,11 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-open class ArticleGrabber(protected val regEx: RegExUtil = RegExUtil()) : ProcessorBase() {
+open class ArticleGrabber(protected val options: ReadabilityOptions, protected val regEx: RegExUtil = RegExUtil()) : ProcessorBase() {
 
     companion object {
-        // Max number of nodes supported by this parser. Default: 0 (no limit)
-        const val DEFAULT_MAX_ELEMS_TO_PARSE = 0
-
-        // The number of top candidates to consider when analysing how
-        // tight the competition is among candidates.
-        const val DEFAULT_N_TOP_CANDIDATES = 5
-
         // Element tags to score by default.
         val DEFAULT_TAGS_TO_SCORE = Arrays.asList("section", "h2", "h3", "h4", "h5", "h6", "p", "td", "pre")
-
-        // The default number of words an article must have in order to return a result
-        const val DEFAULT_WORD_THRESHOLD = 500
         
         
         val DIV_TO_P_ELEMS = Arrays.asList("a", "blockquote", "dl", "div", "img", "ol", "p", "pre", "table", "ul", "select")
@@ -56,9 +47,8 @@ open class ArticleGrabber(protected val regEx: RegExUtil = RegExUtil()) : Proces
         protected set
 
 
-    protected val _maxElemsToParse = /*options.maxElemsToParse ||*/ DEFAULT_MAX_ELEMS_TO_PARSE
-    protected val _nbTopCandidates = /*options.nbTopCandidates ||*/ DEFAULT_N_TOP_CANDIDATES
-    protected val _wordThreshold = /*options.wordThreshold ||*/ DEFAULT_WORD_THRESHOLD
+    protected val nbTopCandidates = options.nbTopCandidates
+    protected val wordThreshold = options.wordThreshold
 
     protected val readabilityObjects = HashMap<Element, ReadabilityObject>()
 
@@ -138,7 +128,7 @@ open class ArticleGrabber(protected val regEx: RegExUtil = RegExUtil()) : Proces
             // grabArticle with different flags set. This gives us a higher likelihood of
             // finding the content, and the sieve approach gives us a higher likelihood of
             // finding the -right- content.
-            if(getInnerText(articleContent, true).length < this._wordThreshold) {
+            if(getInnerText(articleContent, true).length < this.wordThreshold) {
                 page.html(pageCacheHtml)
 
                 if(options.stripUnlikelyCandidates) {
@@ -505,15 +495,15 @@ open class ArticleGrabber(protected val regEx: RegExUtil = RegExUtil()) : Proces
 
                 log.info("Candidate: $candidate with score $candidateScore")
 
-                for(t in 0.._nbTopCandidates - 1) {
+                for(t in 0..nbTopCandidates - 1) {
                     val aTopCandidate = if(topCandidates.size > t) topCandidates[t] else null
                     val topCandidateReadability = if(aTopCandidate != null) getReadabilityObject(aTopCandidate) else null
 
                     if(aTopCandidate == null || (topCandidateReadability != null && candidateScore > topCandidateReadability.contentScore)) {
                         topCandidates.add(t, candidate)
 
-                        if(topCandidates.size > this._nbTopCandidates) {
-                            topCandidates.removeAt(_nbTopCandidates)
+                        if(topCandidates.size > this.nbTopCandidates) {
+                            topCandidates.removeAt(nbTopCandidates)
                         }
                         break
                     }

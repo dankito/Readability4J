@@ -2,11 +2,13 @@ package net.dankito.readability4j
 
 import com.github.difflib.DiffUtils
 import net.dankito.readability4j.model.PageTestData
+import net.dankito.readability4j.model.ReadabilityOptions
 import org.jsoup.Jsoup
 import org.junit.Test
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
+import java.util.*
 
 class Readability4JTest {
 
@@ -374,7 +376,8 @@ class Readability4JTest {
     }
 
     private fun testPage(testData: PageTestData) {
-        val underTest = Readability4J("http://fakehost/test/page.html", testData.sourceHtml) // TODO: get uri
+        val underTest = Readability4J("http://fakehost/test/page.html", testData.sourceHtml,
+                ReadabilityOptions(additionalClassesToPreserve = Arrays.asList("caption")))
 
         val article = underTest.parse()
 
@@ -382,7 +385,6 @@ class Readability4JTest {
 
         // Readability tests don't use Readability's real output but a parsed one which removes some tags. So i created with Readability's JavaScript code expected files with its real output
         val expectedElement = Jsoup.parse(testData.expectedOutputReal).body()
-        expectedElement.select("[class=caption]").forEach { it.removeAttr("class") } // TODO: add options to Readability class and for tests add 'caption' to classesToPreserve
         // on each parsing step Jsoup adds new new lines. As actual is parsed twice we also have to parse expected twice
         val expected = Jsoup.parse(expectedElement.html()).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ")
 
