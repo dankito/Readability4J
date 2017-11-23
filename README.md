@@ -4,3 +4,5 @@ _removeScripts() and _prepDocument() can be found in Preprocessor.prepareDocumen
 _grabArticle() can be found in ArticleGrabber.grabArticle()
 
 _postProcessContent() can be found in Postprocessor.postProcessContent()
+
+_getArticleMetadata() is implemented in MetadataParser.getArticleMetadata()

@@ -9,6 +9,8 @@ buildscript {
 
         jsoupVersion = '1.11.2'
 
+        jacksonVersion = '2.9.2'
+
         logbackVersion = '1.2.3'
 
         diffUtilsVersion = '2.2'
@@ -42,10 +44,12 @@ dependencies {
 
     testCompile "junit:junit:4.12"
 
-    testCompile "ch.qos.logback:logback-core:$logbackVersion"
-    testCompile "ch.qos.logback:logback-classic:$logbackVersion"
+    testCompile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
 
     testCompile "com.github.wumpz:diffutils:$diffUtilsVersion"
+
+    testCompile "ch.qos.logback:logback-core:$logbackVersion"
+    testCompile "ch.qos.logback:logback-classic:$logbackVersion"
 }
 
 

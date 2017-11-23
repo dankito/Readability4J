@@ -1,6 +1,7 @@
 package net.dankito.readability4j.processor
 
 import net.dankito.readability4j.model.ArticleGrabberOptions
+import net.dankito.readability4j.model.ArticleMetadata
 import net.dankito.readability4j.model.ReadabilityObject
 import net.dankito.readability4j.model.ReadabilityOptions
 import net.dankito.readability4j.util.RegExUtil
@@ -37,9 +38,6 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
     }
 
 
-    var articleTitle: String? = null
-        protected set
-
     var articleByline: String? = null
         protected set
 
@@ -55,7 +53,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
     protected val readabilityDataTable = HashMap<Element, Boolean>()
 
 
-    open fun grabArticle(doc: Document, options: ArticleGrabberOptions = ArticleGrabberOptions(), pageElement: Element? = null): Element? {
+    open fun grabArticle(doc: Document, metadata: ArticleMetadata, options: ArticleGrabberOptions = ArticleGrabberOptions(), pageElement: Element? = null): Element? {
         log.info("**** grabArticle ****")
 
         val isPaging = pageElement != null
@@ -97,7 +95,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
 
             log.debug("Article content pre-prep: ${articleContent.html()}")
             // So we have all of the content that we need. Now we clean it up for presentation.
-            prepArticle(articleContent, options)
+            prepArticle(articleContent, options, metadata)
             log.debug("Article content post-prep: ${articleContent.html()}")
 
             if(neededToCreateTopCandidate) {
@@ -128,7 +126,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             // grabArticle with different flags set. This gives us a higher likelihood of
             // finding the content, and the sieve approach gives us a higher likelihood of
             // finding the -right- content.
-            if(getInnerText(articleContent, true).length < this.wordThreshold) {
+            if(getInnerText(articleContent, regEx, true).length < this.wordThreshold) {
                 page.html(pageCacheHtml)
 
                 if(options.stripUnlikelyCandidates) {
@@ -194,7 +192,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             }
 
             // Turn all divs that don't have children block level elements into p's
-            if(node.tagName() === "div") {
+            if(node.tagName() == "div") {
                 // Sites like http://mobile.slate.com encloses each paragraph with a DIV
                 // element. DIVs with only a P element inside and no text content can be
                 // safely converted into plain P elements to avoid confusing the scoring
@@ -236,7 +234,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
 
         val rel = node.attr("rel")
 
-        if((rel == "author" || regEx.isByline(matchString)) && isValidByline(node.text())) {
+        if((rel == "author" || regEx.isByline(matchString)) && isValidByline(node.wholeText())) {
             this.articleByline = node.text().trim()
             return true
         }
@@ -314,7 +312,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             }
 
             // If this paragraph is less than 25 characters, don't even count it.
-            val innerText = this.getInnerText(elementToScore)
+            val innerText = this.getInnerText(elementToScore, regEx)
             if(innerText.length < 25) {
                 return@forEach
             }
@@ -447,20 +445,6 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
         return weight
     }
 
-    /**
-     * Get the inner text of a node - cross browser compatibly.
-     * This also strips out any excess whitespace to be found.
-     */
-    protected open fun getInnerText(e: Element, normalizeSpaces: Boolean = true): String {
-        val textContent = e.text().trim()
-
-        if(normalizeSpaces) {
-            return regEx.normalize(textContent)
-        }
-
-        return textContent
-    }
-
     protected open fun getNodeAncestors(node: Element, maxDepth: Int = 0): List<Element> {
         var i = 0
         val ancestors = ArrayList<Element>()
@@ -516,7 +500,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
 
         // If we still have no top candidate, just use the body as a last resort.
         // We also have to copy the body node so it is something we can modify.
-        if(topCandidate == null || topCandidate.tagName() === "body") {
+        if(topCandidate == null || topCandidate.tagName() == "body") {
             // Move all of the page's children into topCandidate
             topCandidate = Element("div")
             // Move everything (not just elements, also text nodes etc.) into the container
@@ -630,7 +614,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
      * This is the amount of text that is inside a link divided by the total text in the node.
      */
     protected open fun getLinkDensity(element: Element): Double {
-        val textLength = this.getInnerText(element).length
+        val textLength = this.getInnerText(element, regEx).length
         if(textLength == 0) {
             return 0.0
         }
@@ -639,7 +623,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
 
         // XXX implement _reduceNodeList?
         element.getElementsByTag("a").forEach { linkNode ->
-            linkLength += this.getInnerText(linkNode).length
+            linkLength += this.getInnerText(linkNode, regEx).length
         }
 
         return linkLength / textLength.toDouble()
@@ -671,7 +655,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             log.info("Looking at sibling node: $sibling with score ${siblingReadability?.contentScore ?: 0}")
             log.info("Sibling has score ${siblingReadability?.contentScore?.toString() ?: "Unknown"}")
 
-            if(sibling === topCandidate) {
+            if(sibling == topCandidate) {
                 append = true
             }
             else {
@@ -685,9 +669,9 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
                         ((siblingReadability.contentScore + contentBonus) >= siblingScoreThreshold)) {
                     append = true
                 }
-                else if(sibling.tagName() === "p") {
+                else if(sibling.tagName() == "p") {
                     val linkDensity = this.getLinkDensity(sibling)
-                    val nodeContent = this.getInnerText(sibling)
+                    val nodeContent = this.getInnerText(sibling, regEx)
                     val nodeLength = nodeContent.length
 
                     if(nodeLength > 80 && linkDensity < 0.25) {
@@ -726,7 +710,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
      * Prepare the article node for display. Clean out any inline styles,
      * iframes, forms, strip extraneous <p> tags, etc.
      */
-    protected open fun prepArticle(articleContent: Element, options: ArticleGrabberOptions) {
+    protected open fun prepArticle(articleContent: Element, options: ArticleGrabberOptions, metadata: ArticleMetadata) {
         this.cleanStyles(articleContent)
 
         // Check for data tables before we continue, to avoid removing items in
@@ -754,9 +738,9 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
         // so remove it since we already extract the title separately.
         val h2 = articleContent.getElementsByTag("h2")
         if (h2.size == 1) {
-            this.articleTitle?.let { articleTitle ->
+            metadata.title?.let { articleTitle ->
                 if(articleTitle.length > 0) {
-                    val lengthSimilarRate = (h2[0].text().length - articleTitle.length) / articleTitle.length
+                    val lengthSimilarRate = (h2[0].text().length - articleTitle.length) / articleTitle.length.toFloat()
                     if (Math.abs(lengthSimilarRate) < 0.5) {
                         var titlesMatch = false
                         if(lengthSimilarRate > 0) {
@@ -795,7 +779,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             val iframeCount = paragraph.getElementsByTag("iframe").size
             val totalCount = imgCount + embedCount + objectCount + iframeCount
 
-            return@removeNodes totalCount == 0 && getInnerText(paragraph, false).length == 0
+            return@removeNodes totalCount == 0 && getInnerText(paragraph, normalizeSpaces = false).length == 0
         }
 
         articleContent.select("br").forEach { br ->
@@ -811,7 +795,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
      * TODO: Test if getElementsByTagName(*) is faster.
      */
     protected open fun cleanStyles(e: Element) {
-        if(e.tagName() === "svg") {
+        if(e.tagName() == "svg") {
             return
         }
 
@@ -962,7 +946,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
                 }
 
                 val linkDensity = getLinkDensity(node)
-                val contentLength = getInnerText(node).length
+                val contentLength = getInnerText(node, regEx).length
 
                 val haveToRemove =
                         (img > 1 && p / img.toFloat() < 0.5 && !hasAncestorTag(node, "figure")) ||
@@ -1008,7 +992,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
      * Get the number of times a string s appears in the node e.
      */
     protected open fun getCharCount(node: Element, c: Char = ','): Int {
-        return getInnerText(node).split(c).size - 1
+        return getInnerText(node, regEx).split(c).size - 1
     }
 
     /**

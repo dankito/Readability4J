@@ -70,4 +70,18 @@ abstract class ProcessorBase {
         return next as? Element
     }
 
+    /**
+     * Get the inner text of a node - cross browser compatibly.
+     * This also strips out any excess whitespace to be found.
+     */
+    protected open fun getInnerText(e: Element, regEx: RegExUtil? = null, normalizeSpaces: Boolean = true): String {
+        val textContent = e.text().trim()
+
+        if(normalizeSpaces && regEx != null) {
+            return regEx.normalize(textContent)
+        }
+
+        return textContent
+    }
+
 }

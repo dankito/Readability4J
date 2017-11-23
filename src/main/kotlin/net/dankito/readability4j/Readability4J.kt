@@ -1,11 +1,15 @@
 package net.dankito.readability4j
 
+import net.dankito.readability4j.model.ArticleMetadata
 import net.dankito.readability4j.model.ReadabilityOptions
 import net.dankito.readability4j.processor.ArticleGrabber
+import net.dankito.readability4j.processor.MetadataParser
 import net.dankito.readability4j.processor.Postprocessor
 import net.dankito.readability4j.processor.Preprocessor
+import net.dankito.readability4j.util.RegExUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.slf4j.LoggerFactory
 
 
@@ -22,7 +26,11 @@ open class Readability4J {
 
     protected val options: ReadabilityOptions
 
+    protected val regEx: RegExUtil
+
     protected val preprocessor: Preprocessor
+
+    protected val metadataParser: MetadataParser
 
     protected val articleGrabber: ArticleGrabber
 
@@ -36,8 +44,10 @@ open class Readability4J {
         this.document = document
         this.options = options
 
-        this.preprocessor = Preprocessor()
-        this.articleGrabber = ArticleGrabber(options)
+        this.regEx = RegExUtil()
+        this.preprocessor = Preprocessor(regEx)
+        this.metadataParser = MetadataParser(regEx)
+        this.articleGrabber = ArticleGrabber(options, regEx)
         this.postprocessor = Postprocessor()
     }
 
@@ -67,16 +77,36 @@ open class Readability4J {
 
         preprocessor.prepareDocument(document)
 
-        val contentElement = articleGrabber.grabArticle(document)
-        log.info("Grabbed: $contentElement")
+        val metadata = metadataParser.getArticleMetadata(document)
 
-        contentElement?.let { articleContent ->  // TODO: or return null if grabbing didn't work?
+        val articleContent = articleGrabber.grabArticle(document, metadata)
+        log.info("Grabbed: $articleContent")
+
+        articleContent?.let { // TODO: or return null if grabbing didn't work?
             postprocessor.postProcessContent(articleContent, uri, options.additionalClassesToPreserve)
 
-            article.content = articleContent.html() // TODO: but this removes paging information (pages in top node <div id="readability-content">)
+            article.articleContent = articleContent
         }
+        
+        setArticleMetadata(article, metadata, articleContent)
 
         return article
+    }
+
+    private fun setArticleMetadata(article: Article, metadata: ArticleMetadata, articleContent: Element?) {
+        // If we haven't found an excerpt in the article's metadata, use the article's
+        // first paragraph as the excerpt. This is used for displaying a preview of
+        // the article's content.
+        if(metadata.excerpt.isNullOrBlank()) {
+            articleContent?.getElementsByTag("p")?.first()?.let { firstParagraph ->
+                metadata.excerpt = firstParagraph.text().trim()
+            }
+        }
+
+        article.title = metadata.title
+        article.byline = if(metadata.byline.isNullOrBlank()) articleGrabber.articleByline else metadata.byline
+        article.dir = article.dir
+        article.excerpt = metadata.excerpt
     }
 
 }
