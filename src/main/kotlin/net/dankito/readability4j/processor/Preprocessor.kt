@@ -105,7 +105,6 @@ open class Preprocessor(protected val regEx: RegExUtil = RegExUtil()) : Processo
      *   <div>foo<br>bar<p>abc</p></div>
      */
     protected open fun replaceBrs(document: Document, regEx: RegExUtil) {
-        val test = document.body().select("br")
         document.body().select("br").forEach { br ->
             var next: Node? = br.nextSibling()
 
