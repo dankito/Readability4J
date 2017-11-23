@@ -2,7 +2,17 @@ group 'net.dankito'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.1.60'
+    ext {
+        kotlin_version = '1.1.60'
+
+        slf4jVersion = '1.7.25'
+
+        jsoupVersion = '1.11.2'
+
+        logbackVersion = '1.2.3'
+
+        diffUtilsVersion = '2.2'
+    }
 
     repositories {
         mavenCentral()
@@ -25,14 +35,24 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+
+    compile "org.jsoup:jsoup:$jsoupVersion"
+
+
     testCompile "junit:junit:4.12"
+
+    testCompile "ch.qos.logback:logback-core:$logbackVersion"
+    testCompile "ch.qos.logback:logback-classic:$logbackVersion"
+
+    testCompile "com.github.wumpz:diffutils:$diffUtilsVersion"
 }
 
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.7"
+    kotlinOptions.jvmTarget = "1.6"
 }
 
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.7"
+    kotlinOptions.jvmTarget = "1.6"
 }
