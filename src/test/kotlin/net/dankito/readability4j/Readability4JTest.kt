@@ -411,15 +411,7 @@ open class Readability4JTest {
         }
 
 
-        val expectedTitle = testData.expectedMetadata.title?.let { regEx.normalize(it.replace("| Herald Sun", "").trim()) } // Readability doesn't normalize title but we do; Readability is not able to remove | Herald Sun while we do
-        assert(expectedTitle == article.title) { "Title doesn't match\n\nExpected:\n${expectedTitle}\n\nActual:\n${article.title}"}
-
-        val expectedExcerpt = testData.expectedMetadata.excerpt?.let { regEx.normalize(it) } // Readability doesn't normalize excerpt but we do
-        val actualExcerpt = fixExcerptForSomeTestCases(testData, article.excerpt) // Readability has a bug to extract og:description -> fix these
-        assert(expectedExcerpt == actualExcerpt) { "Excerpt doesn't match\n\nExpected:\n${expectedExcerpt}\n\nActual:\n${actualExcerpt}"}
-
-        val expectedByline = testData.expectedMetadata.byline?.let { regEx.normalize(it) } // Readability doesn't normalize byline but we do
-        assert(expectedByline == article.byline) { "Byline doesn't match\n\nExpected:\n${expectedByline}\n\nActual:\n${article.byline}"}
+        testMetadata(testData, article)
     }
 
     private fun fixArticleContentWhitespacesForSameTestCases(testData: PageTestData, actual: String): String {
@@ -456,6 +448,19 @@ open class Readability4JTest {
 //        }
 
         return actual
+    }
+
+
+    private fun testMetadata(testData: PageTestData, article: Article) {
+        val expectedTitle = testData.expectedMetadata.title?.let { regEx.normalize(it.replace("| Herald Sun", "").trim()) } // Readability doesn't normalize title but we do; Readability is not able to remove | Herald Sun while we do
+        assert(expectedTitle == article.title) { "Title doesn't match\n\nExpected:\n${expectedTitle}\n\nActual:\n${article.title}" }
+
+        val expectedExcerpt = testData.expectedMetadata.excerpt?.let { regEx.normalize(it) } // Readability doesn't normalize excerpt but we do
+        val actualExcerpt = fixExcerptForSomeTestCases(testData, article.excerpt) // Readability has a bug to extract og:description -> fix these
+        assert(expectedExcerpt == actualExcerpt) { "Excerpt doesn't match\n\nExpected:\n${expectedExcerpt}\n\nActual:\n${actualExcerpt}" }
+
+        val expectedByline = testData.expectedMetadata.byline?.let { regEx.normalize(it) } // Readability doesn't normalize byline but we do
+        assert(expectedByline == article.byline) { "Byline doesn't match\n\nExpected:\n${expectedByline}\n\nActual:\n${article.byline}" }
     }
 
     private fun fixExcerptForSomeTestCases(testData: PageTestData, excerpt: String?): String? {
