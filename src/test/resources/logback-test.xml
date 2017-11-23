@@ -8,7 +8,7 @@
         </encoder>
 
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>INFO</level>
+            <level>DEBUG</level>
         </filter>
     </appender>
 
@@ -17,7 +17,7 @@
          available to all subsequent configuration elements. -->
     <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
 
-    <!-- Reduce to DEBUG here and above to see also article content pre and post preparation in log output -->
+    <!-- Reduce to DEBUG to also see article content pre and post preparation in log output -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
