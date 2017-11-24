@@ -313,6 +313,11 @@ open class Readability4JTest {
     }
 
     @Test
+    fun testTelegraph() {
+        testPage("telegraph")
+    }
+
+    @Test
     fun testTMZ1() {
         testPage("tmz-1")
     }
