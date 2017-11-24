@@ -395,6 +395,8 @@ open class Readability4JTest {
     }
 
     private fun testPage(testData: PageTestData) {
+        // Provide one class name to preserve, which we know appears in a few
+        // of the test documents.
         val underTest = Readability4J("http://fakehost/test/page.html", testData.sourceHtml,
                 ReadabilityOptions(additionalClassesToPreserve = Arrays.asList("caption")))
 
