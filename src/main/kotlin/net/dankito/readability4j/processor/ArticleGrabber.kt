@@ -201,6 +201,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
                     val newNode = node.child(0)
                     node.replaceWith(newNode)
                     node = newNode
+                    elementsToScore.add(node)
                 }
                 else if(!this.hasChildBlockElement(node)) {
                     setNodeTag(node, "p")
