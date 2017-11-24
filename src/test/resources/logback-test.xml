@@ -17,8 +17,8 @@
          available to all subsequent configuration elements. -->
     <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
 
-    <!-- Reduce to DEBUG to also see article content pre and post preparation in log output -->
-    <root level="INFO">
+    <!-- Raise log level here if you don't want to see noisy log output -->
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

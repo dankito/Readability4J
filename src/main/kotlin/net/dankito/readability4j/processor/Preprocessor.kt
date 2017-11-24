@@ -21,7 +21,7 @@ open class Preprocessor(protected val regEx: RegExUtil = RegExUtil()) : Processo
      * This includes things like stripping javascript, CSS, and handling terrible markup.
      */
     open fun prepareDocument(document: Document) {
-        log.info("Starting to prepare document")
+        log.debug("Starting to prepare document")
 
         removeScripts(document)
 

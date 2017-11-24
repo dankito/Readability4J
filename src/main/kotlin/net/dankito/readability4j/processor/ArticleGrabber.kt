@@ -54,14 +54,14 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
 
 
     open fun grabArticle(doc: Document, metadata: ArticleMetadata, options: ArticleGrabberOptions = ArticleGrabberOptions(), pageElement: Element? = null): Element? {
-        log.info("**** grabArticle ****")
+        log.debug("**** grabArticle ****")
 
         val isPaging = pageElement != null
         val page = pageElement ?: doc.body()
 
         // We can't grab an article if we don't have a page!
         if(page == null) {
-            log.info("No body found in document. Abort.")
+            log.debug("No body found in document. Abort.")
             return null
         }
 
@@ -478,7 +478,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
                 val candidateScore = readability.contentScore * (1 - this.getLinkDensity(candidate))
                 readability.contentScore = candidateScore
 
-                log.info("Candidate: $candidate with score $candidateScore")
+                log.debug("Candidate: $candidate with score $candidateScore")
 
                 for(t in 0..nbTopCandidates - 1) {
                     val aTopCandidate = if(topCandidates.size > t) topCandidates[t] else null
@@ -507,7 +507,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             // Move everything (not just elements, also text nodes etc.) into the container
             // so we even include text directly in the body:
             ArrayList(page.childNodes()).forEach { child ->
-                log.info("Moving child out:", child)
+                log.debug("Moving child out:", child)
                 child.remove()
                 topCandidate?.appendChild(child)
             }
@@ -653,8 +653,8 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             var append = false
 
             val siblingReadability = getReadabilityObject(sibling)
-            log.info("Looking at sibling node: $sibling with score ${siblingReadability?.contentScore ?: 0}")
-            log.info("Sibling has score ${siblingReadability?.contentScore?.toString() ?: "Unknown"}")
+            log.debug("Looking at sibling node: $sibling with score ${siblingReadability?.contentScore ?: 0}")
+            log.debug("Sibling has score ${siblingReadability?.contentScore?.toString() ?: "Unknown"}")
 
             if(sibling == topCandidate) {
                 append = true
@@ -686,12 +686,12 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             }
 
             if(append) {
-                log.info("Appending node: $sibling")
+                log.debug("Appending node: $sibling")
 
                 if(ALTER_TO_DIV_EXCEPTIONS.contains(sibling.tagName()) == false) {
                     // We have a node that isn't a common block level element, like a form or td tag.
                     // Turn it into a div so it doesn't get filtered out later by accident.
-                    log.info("Altering sibling: $sibling to div.")
+                    log.debug("Altering sibling: $sibling to div.")
 
                     setNodeTag(sibling, "div")
                 }
@@ -844,7 +844,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             // If the table has a descendant with any of these tags, consider a data table: (move to DATA_TABLE_DESCENDANTS to make code a more readable and a bit faster)
             DATA_TABLE_DESCENDANTS.forEach { tag ->
                 if(table.getElementsByTag(tag).size > 0) {
-                    log.info("Data table because found data-y descendant")
+                    log.debug("Data table because found data-y descendant")
                     setReadabilityDataTable(table, true)
                     return@outer
                 }
@@ -924,7 +924,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             val weight = getClassWeight(node, options)
             val contentScore = 0
 
-            log.info("Cleaning Conditionally $node")
+            log.debug("Cleaning Conditionally $node")
 
             if(weight + contentScore < 0) {
                 return@removeNodes true
