@@ -95,7 +95,7 @@ open class MetadataParser(protected val regEx: RegExUtil = RegExUtil()): Process
         else if(curTitle.contains(": ")) {
             // Check if we have an heading containing this exact string, so we
             // could assume it's the full title.
-            val match = doc.select("h1, h2").filter { it.text() == curTitle }.size > 0
+            val match = doc.select("h1, h2").filter { it.wholeText() == curTitle }.size > 0
 
             // If we don't, let's extract the title out of the original title string.
             if(match == false) {
