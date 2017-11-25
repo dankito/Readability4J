@@ -1,29 +1,13 @@
 package net.dankito.readability4j
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.difflib.DiffUtils
-import net.dankito.readability4j.model.ArticleMetadata
 import net.dankito.readability4j.model.PageTestData
-import net.dankito.readability4j.model.ReadabilityOptions
-import net.dankito.readability4j.util.RegExUtil
 import org.jsoup.Jsoup
 import org.junit.Test
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
-import java.util.*
 
-open class Readability4JTest {
+open class Readability4JTest : Readability4JTestBase() {
 
     companion object {
-        protected val regEx = RegExUtil()
-
-        protected val objectMapper = ObjectMapper()
-
-        init {
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        }
+        protected val replaceWhiteSpacesAfterClosingTagRegex = ">\\s+\n ".toRegex() // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
     }
 
 
@@ -388,40 +372,23 @@ open class Readability4JTest {
     }
 
 
-    private fun testPage(pageName: String) {
-        val testData = loadTestData(pageName)
-
-        testPage(testData)
+    protected open fun testPage(pageName: String) {
+        testPage("http://fakehost/test/page.html", "test-pages", pageName)
     }
 
-    private fun testPage(testData: PageTestData) {
-        // Provide one class name to preserve, which we know appears in a few
-        // of the test documents.
-        val underTest = Readability4J("http://fakehost/test/page.html", testData.sourceHtml,
-                ReadabilityOptions(additionalClassesToPreserve = Arrays.asList("caption")))
-
-        val article = underTest.parse()
-
-
-        val replaceWhiteSpacesAfterClosingTagRegex = ">\\s+\n ".toRegex() // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
-
+    override fun getExpectedText(testData: PageTestData): String? {
         // Readability tests don't use Readability's real output but a parsed one which removes some tags. So i created with Readability's JavaScript code expected files with its real output
-        val expectedElement = Jsoup.parse(testData.expectedOutputReal).body()
+        val expectedElement = Jsoup.parse(testData.expectedOutput).body()
         // on each parsing step Jsoup adds new new lines. As actual is parsed twice we also have to parse expected twice
-        val expected = Jsoup.parse(expectedElement.html()).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ")
-
-        var actual = Jsoup.parse(article.content).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ")
-        actual = fixArticleContentWhitespacesForSameTestCases(testData, actual) // Jsoup in some cases introduces news lines that aren't in source html -> remove these
-
-        assert(actual == expected) {
-            "Expected:\n${expected}\n\nActual:\n${actual}\n\nDiff:\n${DiffUtils.diff(expected, actual).deltas.joinToString("\n")}"
-        }
-
-
-        testMetadata(testData, article)
+        return Jsoup.parse(expectedElement.html()).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ") // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
     }
 
-    private fun fixArticleContentWhitespacesForSameTestCases(testData: PageTestData, actual: String): String {
+    override fun getActualText(article: Article, testData: PageTestData): String? {
+        val actual = Jsoup.parse(article.content).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ") // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
+        return fixArticleContentWhitespacesForSameTestCasesForExpectedOutput(testData, actual, replaceWhiteSpacesAfterClosingTagRegex) // Jsoup in some cases introduces news lines that aren't in source html -> remove these
+    }
+
+    protected open fun fixArticleContentWhitespacesForSameTestCases(testData: PageTestData, actual: String): String {
         if(testData.pageName == "yahoo-2") {
             return actual.replace("<p> <span>", "<p><span>").replace("</span> </p>", "</span></p>")
                     .replace("         <p> ", "         <p>").replace("photo via AP) </p>", "photo via AP)</p>")
@@ -447,7 +414,7 @@ open class Readability4JTest {
         return actual
     }
 
-    private fun fixArticleContentWhitespacesForSameTestCasesForExpectedOutput(testData: PageTestData, actual: String, replaceWhiteSpacesAfterClosingTagRegex: Regex): String {
+    protected open fun fixArticleContentWhitespacesForSameTestCasesForExpectedOutput(testData: PageTestData, actual: String, replaceWhiteSpacesAfterClosingTagRegex: Regex): String {
         if(testData.pageName == "table-style-attributes") {
             return actual.replace("</span></b></span><br>", "</span></b> </span><br>")
         }
@@ -484,23 +451,23 @@ open class Readability4JTest {
     }
 
 
-    private fun testMetadata(testData: PageTestData, article: Article) {
-        val expectedTitle = testData.expectedMetadata.title?.let { regEx.normalize(it.replace("| Herald Sun", "").trim()) } // Readability doesn't normalize title but we do; Readability is not able to remove | Herald Sun while we do
-        assert(expectedTitle == article.title) { "Title doesn't match\n\nExpected:\n${expectedTitle}\n\nActual:\n${article.title}" }
-
-        val expectedExcerpt = testData.expectedMetadata.excerpt?.let { regEx.normalize(it) } // Readability doesn't normalize excerpt but we do
-        val actualExcerpt = fixExcerptForSomeTestCases(testData, article.excerpt) // Readability has a bug to extract og:description -> fix these
-        assert(expectedExcerpt == actualExcerpt) { "Excerpt doesn't match\n\nExpected:\n${expectedExcerpt}\n\nActual:\n${actualExcerpt}" }
-
-        val expectedByline = testData.expectedMetadata.byline?.let { regEx.normalize(it) } // Readability doesn't normalize byline but we do
-        assert(expectedByline == article.byline) { "Byline doesn't match\n\nExpected:\n${expectedByline}\n\nActual:\n${article.byline}" }
-
-        if(testData.expectedMetadata.dir != null) {
-            assert(testData.expectedMetadata.dir == article.dir) { "Dir doesn't match\n\nExpected:\n${testData.expectedMetadata.dir}\n\nActual:\n${article.dir}" }
-        }
+    override fun getExpectedTitle(testData: PageTestData): String? {
+        return testData.expectedMetadata.title?.let { regEx.normalize(it.replace("| Herald Sun", "").trim()) } // Readability doesn't normalize title but we do; Readability is not able to remove | Herald Sun while we do
     }
 
-    private fun fixExcerptForSomeTestCases(testData: PageTestData, excerpt: String?): String? {
+    override fun getExpectedExcerpt(testData: PageTestData): String? {
+        return testData.expectedMetadata.excerpt?.let { regEx.normalize(it) } // Readability doesn't normalize excerpt but we do
+    }
+
+    override fun getActualExcerpt(testData: PageTestData, article: Article): String? {
+        return fixExcerptForSomeTestCases(testData, article.excerpt) // Readability has a bug to extract og:description -> fix these
+    }
+
+    override fun getExpectedByline(testData: PageTestData): String? {
+        return testData.expectedMetadata.byline?.let { regEx.normalize(it) } // Readability doesn't normalize byline but we do
+    }
+
+    protected open fun fixExcerptForSomeTestCases(testData: PageTestData, excerpt: String?): String? {
         if(testData.pageName == "blogger") {
             return excerpt?.replace(" the blog at work so I figured I'm long overdue for one on Silic...", "")
         }
@@ -517,30 +484,6 @@ open class Readability4JTest {
         }
 
         return excerpt
-    }
-
-    private fun loadTestData(pageName: String): PageTestData {
-        val sourceHtml = getFileContentFromResource(pageName, "source.html")
-        val expectedOutput = getFileContentFromResource(pageName, "expected.html")
-        val expectedOutputReal = getFileContentFromResource(pageName, "expected-real.html")
-
-        val expectedMetadataString = getFileContentFromResource(pageName, "expected-metadata.json")
-        val expectedMetadata = objectMapper.readValue<ArticleMetadata>(expectedMetadataString, ArticleMetadata::class.java)
-
-
-        return PageTestData(pageName, sourceHtml, expectedOutput, expectedOutputReal, expectedMetadata)
-    }
-
-    private fun getFileContentFromResource(pageName: String, resourceFilename: String): String {
-        val url = this.javaClass.classLoader.getResource("test-pages/$pageName/$resourceFilename")
-        val file = File(url.toURI())
-
-        val reader = FileReader(file) // TODO: set encoding
-        val fileContent = BufferedReader(reader).readText()
-
-        reader.close()
-
-        return fileContent
     }
 
 }
