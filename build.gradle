@@ -14,6 +14,8 @@ buildscript {
         logbackVersion = '1.2.3'
 
         diffUtilsVersion = '2.2'
+
+        okHttpVersion = '3.9.1'
     }
 
     repositories {
@@ -47,6 +49,8 @@ dependencies {
     testCompile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
 
     testCompile "com.github.wumpz:diffutils:$diffUtilsVersion"
+
+    testCompile "com.squareup.okhttp3:okhttp:$okHttpVersion"
 
     testCompile "ch.qos.logback:logback-core:$logbackVersion"
     testCompile "ch.qos.logback:logback-classic:$logbackVersion"
