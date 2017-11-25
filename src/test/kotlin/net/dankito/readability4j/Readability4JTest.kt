@@ -27,6 +27,11 @@ open class Readability4JTest : Readability4JTestBase() {
     }
 
     @Test
+    fun testBaseUrl() {
+        testPage("base-url")
+    }
+
+    @Test
     fun testBasicTagsCleaning() {
         testPage("basic-tags-cleaning")
     }
