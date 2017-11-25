@@ -8,9 +8,10 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.slf4j.LoggerFactory
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
+import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 
@@ -118,7 +119,7 @@ class TestDataGenerator {
     }
 
     private fun writeFile(testCaseFolder: File, fileName: String, fileContent: String) {
-        val writer = BufferedWriter(FileWriter(File(testCaseFolder, fileName))) // TODO: set encoding
+        val writer = OutputStreamWriter(FileOutputStream(File(testCaseFolder, fileName)), Charset.forName("UTF-8").newEncoder()) // TODO: set encoding
 
         writer.write(fileContent)
 
