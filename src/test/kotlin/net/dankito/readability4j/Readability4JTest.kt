@@ -393,7 +393,7 @@ open class Readability4JTest : Readability4JTestBase() {
         }
 
         val actual = Jsoup.parse(article.content).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ") // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
-        return fixArticleContentWhitespacesForSameTestCasesForExpectedOutput(testData, actual, replaceWhiteSpacesAfterClosingTagRegex) // Jsoup in some cases introduces news lines that aren't in source html -> remove these
+        return fixArticleContentWhitespacesForSameTestCases(testData, actual) // Jsoup in some cases introduces news lines that aren't in source html -> remove these
     }
 
     protected open fun fixArticleContentWhitespacesForSameTestCases(testData: PageTestData, actual: String): String {
@@ -418,12 +418,7 @@ open class Readability4JTest : Readability4JTestBase() {
 
             return actualWithExpandedPolygonTags
         }
-
-        return actual
-    }
-
-    protected open fun fixArticleContentWhitespacesForSameTestCasesForExpectedOutput(testData: PageTestData, actual: String, replaceWhiteSpacesAfterClosingTagRegex: Regex): String {
-        if(testData.pageName == "table-style-attributes") {
+        else if(testData.pageName == "table-style-attributes") {
             return actual.replace("</span></b></span><br>", "</span></b> </span><br>")
         }
         else if(testData.pageName == "clean-links") {
@@ -455,7 +450,7 @@ open class Readability4JTest : Readability4JTestBase() {
             return doc.body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ").replace(" </div>  ", " </div> ")
         }
 
-        return fixArticleContentWhitespacesForSameTestCases(testData, actual)
+        return actual
     }
 
 

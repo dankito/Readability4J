@@ -99,13 +99,12 @@ abstract class Readability4JTestBase {
     protected open fun loadTestData(testPageFolderName: String, pageName: String): PageTestData {
         val sourceHtml = getFileContentFromResource(testPageFolderName, pageName, "source.html")
         val expectedOutput = getFileContentFromResource(testPageFolderName, pageName, "expected.html")
-        val expectedOutputReal = ""
 
         val expectedMetadataString = getFileContentFromResource(testPageFolderName, pageName, "expected-metadata.json")
         val expectedMetadata = objectMapper.readValue<ArticleMetadata>(expectedMetadataString, ArticleMetadata::class.java)
 
 
-        return PageTestData(pageName, sourceHtml, expectedOutput, expectedOutputReal, expectedMetadata)
+        return PageTestData(pageName, sourceHtml, expectedOutput, expectedMetadata)
     }
 
     protected open fun getFileContentFromResource(testPageFolderName: String, pageName: String, resourceFilename: String): String {
