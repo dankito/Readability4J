@@ -32,9 +32,9 @@ class TestDataGenerator : TestDataGeneratorBase() {
 
             builder.followRedirects(true)
             builder.retryOnConnectionFailure(true)
-            builder.connectTimeout(2000L, TimeUnit.MILLISECONDS)
-            builder.readTimeout(2000L, TimeUnit.MILLISECONDS)
-            builder.writeTimeout(2000L, TimeUnit.MILLISECONDS)
+            builder.connectTimeout(2000L, TimeUnit.SECONDS)
+            builder.readTimeout(2000L, TimeUnit.SECONDS)
+            builder.writeTimeout(2000L, TimeUnit.SECONDS)
 
             client = builder.build()
         }
