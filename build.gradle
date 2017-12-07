@@ -1,5 +1,6 @@
-group 'net.dankito'
-version '1.0-SNAPSHOT'
+group 'net.dankito.readability4j'
+version '1.0'
+def artifactId = "readability4j"
 
 buildscript {
     ext {
@@ -29,6 +30,9 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
+
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = 1.7 // for Android use compatibility with Java 7
 
@@ -63,4 +67,72 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.6"
+}
+
+
+
+/*          publish to maven central            */
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name artifactId
+                artifactId = artifactId
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                description "A Kotlin port of Mozilla‘s Readability. It extracts a website‘s relevant content and removes all clutter from it."
+                url 'https://github.com/dankito/Readability4J'
+
+                scm {
+                    connection 'scm:git:git://github.com/dankito/Readability4J.git'
+                    developerConnection 'scm:git:git@github.com:dankito/Readability4J.git'
+                    url 'https://github.com/dankito/Readability4J'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'dankito'
+                        name 'Christian Dankl'
+                        email 'maven@dankito.net'
+                    }
+                }
+            }
+        }
+    }
 }
