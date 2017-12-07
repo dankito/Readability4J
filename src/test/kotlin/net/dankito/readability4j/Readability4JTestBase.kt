@@ -6,7 +6,6 @@ import com.github.difflib.DiffUtils
 import net.dankito.readability4j.model.ArticleMetadata
 import net.dankito.readability4j.model.PageTestData
 import net.dankito.readability4j.model.ReadabilityOptions
-import net.dankito.readability4j.util.RegExUtil
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -15,8 +14,6 @@ import java.util.*
 abstract class Readability4JTestBase {
 
     companion object {
-        @JvmStatic
-        protected val regEx = RegExUtil()
 
         protected val objectMapper = ObjectMapper()
 
