@@ -39,6 +39,12 @@ open class Postprocessor {
         val prePath = uri.scheme + "://" + uri.host
         val pathBase = uri.scheme + "://" + uri.host + uri.path.substring(0, uri.path.lastIndexOf("/") + 1) // TODO: catch exceptions
 
+        fixRelativeAnchorUris(element, scheme, prePath, pathBase)
+
+        fixRelativeImageUris(element, scheme, prePath, pathBase)
+    }
+
+    private fun fixRelativeAnchorUris(element: Element, scheme: String, prePath: String, pathBase: String) {
         element.getElementsByTag("a").forEach { link ->
             val href = link.attr("href")
             if(href.isNotBlank()) {
@@ -47,13 +53,15 @@ open class Postprocessor {
                 if(href.indexOf("javascript:") == 0) {
                     val text = TextNode(link.wholeText())
                     link.replaceWith(text)
-                } 
+                }
                 else {
                     link.attr("href", toAbsoluteURI(href, scheme, prePath, pathBase))
                 }
             }
         }
+    }
 
+    private fun fixRelativeImageUris(element: Element, scheme: String, prePath: String, pathBase: String) {
         element.getElementsByTag("img").forEach { img ->
             val src = img.attr("src")
             if(src.isNotBlank()) {
