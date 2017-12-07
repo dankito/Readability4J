@@ -44,7 +44,7 @@ class TestDataReParser : TestDataGeneratorBase() {
                 "replace-brs", "replace-font-tags",
                 "rtl-1", "rtl-2", "rtl-3", "rtl-4",
                 "salon-1", "simplyfound-1", "social-buttons", "style-tags-removal", "svg-parsing",
-                "table-style-attributes", "telegraph", "tmz-1", "tumblr",
+                "table-style-attributes", "telegraph", "title-and-h1-discrepancy", "tmz-1", "tumblr",
                 "wapo-1", "wapo-2", "webmd-1", "webmd-2", "wikia",
                 "wikipedia", "wordpress",
                 "yahoo-1", "yahoo-2", "yahoo-3", "yahoo-4", "youth"

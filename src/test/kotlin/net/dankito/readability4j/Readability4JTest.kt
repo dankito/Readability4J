@@ -307,6 +307,11 @@ open class Readability4JTest : Readability4JTestBase() {
     }
 
     @Test
+    fun testTitleAndH1Discrepancy() {
+        testPage("title-and-h1-discrepancy")
+    }
+
+    @Test
     fun testTMZ1() {
         testPage("tmz-1")
     }
