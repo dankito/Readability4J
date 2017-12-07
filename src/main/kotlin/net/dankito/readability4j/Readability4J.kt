@@ -37,7 +37,19 @@ open class Readability4J {
     protected val postprocessor: Postprocessor
 
 
+    // for Java interoperability
+    /**
+     * Calls Readability(String, String, ReadabilityOptions) with default ReadabilityOptions
+     */
+    constructor(uri: String, html: String) : this(uri, html, ReadabilityOptions())
+
     constructor(uri: String, html: String, options: ReadabilityOptions = ReadabilityOptions()) : this(uri, Jsoup.parse(html, uri), options)
+
+    // for Java interoperability
+    /**
+     * Calls Readability(String, Document, ReadabilityOptions) with default ReadabilityOptions
+     */
+    constructor(uri: String, document: Document) : this(uri, document, ReadabilityOptions())
 
     constructor(uri: String, document: Document, options: ReadabilityOptions = ReadabilityOptions()) {
         this.uri = uri
