@@ -44,7 +44,7 @@ open class Postprocessor {
         fixRelativeImageUris(element, scheme, prePath, pathBase)
     }
 
-    private fun fixRelativeAnchorUris(element: Element, scheme: String, prePath: String, pathBase: String) {
+    protected open fun fixRelativeAnchorUris(element: Element, scheme: String, prePath: String, pathBase: String) {
         element.getElementsByTag("a").forEach { link ->
             val href = link.attr("href")
             if(href.isNotBlank()) {
@@ -61,12 +61,17 @@ open class Postprocessor {
         }
     }
 
-    private fun fixRelativeImageUris(element: Element, scheme: String, prePath: String, pathBase: String) {
+    protected open fun fixRelativeImageUris(element: Element, scheme: String, prePath: String, pathBase: String) {
         element.getElementsByTag("img").forEach { img ->
-            val src = img.attr("src")
-            if(src.isNotBlank()) {
-                img.attr("src", toAbsoluteURI(src, scheme, prePath, pathBase))
-            }
+            fixRelativeImageUri(img, scheme, prePath, pathBase)
+        }
+    }
+
+    protected open fun fixRelativeImageUri(img: Element, scheme: String, prePath: String, pathBase: String) {
+        val src = img.attr("src")
+
+        if(src.isNotBlank()) {
+            img.attr("src", toAbsoluteURI(src, scheme, prePath, pathBase))
         }
     }
 
