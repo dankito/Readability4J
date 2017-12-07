@@ -20,16 +20,22 @@ abstract class TestDataGeneratorBase {
 
 
     protected open fun writeTestData(sourceHtml: String, article: Article, testFolderName: String, testCaseName: String) {
-        val testPagesFolder = File(getPathToTestResourcesFolder(), testFolderName)
-
-        val testCaseFolder = File(testPagesFolder, testCaseName)
-        if(testCaseFolder.exists() == false) {
-            testCaseFolder.mkdirs()
-        }
+        val testCaseFolder = getTestCaseFolder(testFolderName, testCaseName)
 
         writeFile(testCaseFolder, "source.html", sourceHtml)
         writeFile(testCaseFolder, "expected.html", article.content ?: "")
         writeFile(testCaseFolder, "expected-metadata.json", generateMetadataJson(article))
+    }
+
+    protected open fun getTestCaseFolder(testFolderName: String, testCaseName: String): File {
+        val testPagesFolder = File(getPathToTestResourcesFolder(), testFolderName)
+        val testCaseFolder = File(testPagesFolder, testCaseName)
+
+        if(testCaseFolder.exists() == false) {
+            testCaseFolder.mkdirs()
+        }
+
+        return testCaseFolder
     }
 
     protected open fun generateMetadataJson(article: Article): String {
