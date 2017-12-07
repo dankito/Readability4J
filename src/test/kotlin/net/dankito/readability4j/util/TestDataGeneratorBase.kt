@@ -27,7 +27,7 @@ abstract class TestDataGeneratorBase {
         writeFile(testCaseFolder, "expected-metadata.json", generateMetadataJson(article))
 
         if(articleExtended.content != article.content) {
-            writeFile(testCaseFolder, "expected-extended.html", article.content ?: "")
+            writeFile(testCaseFolder, "expected-extended.html", articleExtended.content ?: "")
         }
     }
 
