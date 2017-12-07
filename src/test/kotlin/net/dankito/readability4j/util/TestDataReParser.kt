@@ -2,6 +2,7 @@ package net.dankito.readability4j.util
 
 import net.dankito.readability4j.Readability4J
 import net.dankito.readability4j.Readability4JTest
+import net.dankito.readability4j.extended.Readability4JExtended
 import net.dankito.readability4j.model.ReadabilityOptions
 import org.slf4j.LoggerFactory
 import java.io.BufferedReader
@@ -77,7 +78,11 @@ class TestDataReParser : TestDataGeneratorBase() {
                 ReadabilityOptions(additionalClassesToPreserve = Arrays.asList("caption")))
         val article = readability.parse()
 
-        writeTestData(sourceHtml, article, testFolderName, testCaseName)
+        val readabilityExtended = Readability4JExtended(url, sourceHtml,
+                ReadabilityOptions(additionalClassesToPreserve = Arrays.asList("caption")))
+        val articleExtended = readabilityExtended.parse()
+
+        writeTestData(sourceHtml, article, articleExtended, testFolderName, testCaseName)
     }
 
 

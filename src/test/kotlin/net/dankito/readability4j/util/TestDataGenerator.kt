@@ -1,6 +1,7 @@
 package net.dankito.readability4j.util
 
 import net.dankito.readability4j.Readability4J
+import net.dankito.readability4j.extended.Readability4JExtended
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -47,10 +48,12 @@ class TestDataGenerator : TestDataGeneratorBase() {
         val webSiteHtml = getResponse(url)
 
         val readability = Readability4J(url, webSiteHtml)
-
         val article = readability.parse()
 
-        writeTestData(webSiteHtml, article, testFolderName, testCaseName)
+        val readabilityExtended = Readability4JExtended(url, webSiteHtml)
+        val articleExtended = readabilityExtended.parse()
+
+        writeTestData(webSiteHtml, article, articleExtended, testFolderName, testCaseName)
     }
 
 

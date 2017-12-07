@@ -670,7 +670,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
                         ((siblingReadability.contentScore + contentBonus) >= siblingScoreThreshold)) {
                     append = true
                 }
-                else if(sibling.tagName() == "p") {
+                else if(shouldKeepSibling(sibling)) {
                     val linkDensity = this.getLinkDensity(sibling)
                     val nodeContent = this.getInnerText(sibling, regEx)
                     val nodeLength = nodeContent.length
@@ -701,6 +701,10 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
         }
 
         return articleContent
+    }
+
+    protected open fun shouldKeepSibling(sibling: Element): Boolean {
+        return sibling.tagName() == "p"
     }
 
 
