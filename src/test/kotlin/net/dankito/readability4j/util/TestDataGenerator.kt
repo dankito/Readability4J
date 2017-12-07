@@ -2,6 +2,7 @@ package net.dankito.readability4j.util
 
 import net.dankito.readability4j.Readability4J
 import net.dankito.readability4j.extended.Readability4JExtended
+import net.dankito.readability4j.model.ReadabilityOptions
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -47,10 +48,12 @@ class TestDataGenerator : TestDataGeneratorBase() {
     fun generateTestData(testFolderName: String, testCaseName: String, url: String) {
         val webSiteHtml = getResponse(url)
 
-        val readability = Readability4J(url, webSiteHtml)
+        // We pass `caption` as a class to check that passing in extra classes works,
+        // given that it appears in some of the test documents.
+        val readability = Readability4J(url, webSiteHtml, ReadabilityOptions(additionalClassesToPreserve = listOf("caption")))
         val article = readability.parse()
 
-        val readabilityExtended = Readability4JExtended(url, webSiteHtml)
+        val readabilityExtended = Readability4JExtended(url, webSiteHtml, ReadabilityOptions(additionalClassesToPreserve = listOf("caption")))
         val articleExtended = readabilityExtended.parse()
 
         writeTestData(webSiteHtml, article, articleExtended, testFolderName, testCaseName)
