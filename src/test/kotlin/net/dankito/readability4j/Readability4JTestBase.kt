@@ -52,13 +52,13 @@ abstract class Readability4JTestBase {
 
 
 
-    protected open fun testPage(url: String, testPageFolderName: String, pageName: String) {
+    protected open fun testPage(url: String, testPageFolderName: String, pageName: String): Article {
         val testData = loadTestData(testPageFolderName, pageName)
 
-        testPage(url, testData)
+        return testPage(url, testData)
     }
 
-    protected open fun testPage(url: String, testData: PageTestData) {
+    protected open fun testPage(url: String, testData: PageTestData): Article {
         // Provide one class name to preserve, which we know appears in a few
         // of the test documents.
         val underTest = Readability4J(url, testData.sourceHtml,
@@ -76,6 +76,8 @@ abstract class Readability4JTestBase {
 
 
         testMetadata(testData, article)
+
+        return article
     }
 
 
