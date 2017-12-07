@@ -8,6 +8,8 @@ open class RegExUtilExtended : RegExUtil {
 
     companion object {
         const val RemoveImageDefaultPattern = "author|avatar|thumbnail" // CHANGE: this is not in Mozilla's Readability
+
+        const val NegativeDefaultPatternExtended = "|float"
     }
 
 
@@ -15,7 +17,7 @@ open class RegExUtilExtended : RegExUtil {
 
 
     constructor(unlikelyCandidatesPattern: String = UnlikelyCandidatesDefaultPattern, okMaybeItsACandidatePattern: String = OkMaybeItsACandidateDefaultPattern,
-                positivePattern: String = PositiveDefaultPattern, negativePattern: String = NegativeDefaultPattern,
+                positivePattern: String = PositiveDefaultPattern, negativePattern: String = NegativeDefaultPattern + NegativeDefaultPatternExtended,
                 extraneousPattern: String = ExtraneousDefaultPattern, bylinePattern: String = BylineDefaultPattern,
                 replaceFontsPattern: String = ReplaceFontsDefaultPattern, normalizePattern: String = NormalizeDefaultPattern,
                 videosPattern: String = VideosDefaultPattern, nextLinkPattern: String = NextLinkDefaultPattern,
