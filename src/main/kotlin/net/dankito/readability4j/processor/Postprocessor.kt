@@ -2,6 +2,7 @@ package net.dankito.readability4j.processor
 
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
+import org.slf4j.LoggerFactory
 import java.net.URI
 import java.util.*
 import java.util.regex.Pattern
@@ -16,6 +17,8 @@ open class Postprocessor {
         // These are the IDs and classes that readability sets itself.
         val IDS_TO_PRESERVE = Arrays.asList("readability-content", "readability-page-1")
         val CLASSES_TO_PRESERVE = Arrays.asList("readability-styled", "page")
+
+        private val log = LoggerFactory.getLogger(Postprocessor::class.java)
     }
     
 
@@ -34,14 +37,16 @@ open class Postprocessor {
      * ignoring #ref URIs.
      */
     protected open fun fixRelativeUris(element: Element, articleUri: String) {
-        val uri = URI.create(articleUri)
-        val scheme = uri.scheme
-        val prePath = uri.scheme + "://" + uri.host
-        val pathBase = uri.scheme + "://" + uri.host + uri.path.substring(0, uri.path.lastIndexOf("/") + 1) // TODO: catch exceptions
+        try {
+            val uri = URI.create(articleUri)
+            val scheme = uri.scheme
+            val prePath = uri.scheme + "://" + uri.host
+            val pathBase = uri.scheme + "://" + uri.host + uri.path.substring(0, uri.path.lastIndexOf("/") + 1)
 
-        fixRelativeAnchorUris(element, scheme, prePath, pathBase)
+            fixRelativeAnchorUris(element, scheme, prePath, pathBase)
 
-        fixRelativeImageUris(element, scheme, prePath, pathBase)
+            fixRelativeImageUris(element, scheme, prePath, pathBase)
+        } catch(e: Exception) { log.error("Could not fix relative urls for $element with base uri $articleUri", e) }
     }
 
     protected open fun fixRelativeAnchorUris(element: Element, scheme: String, prePath: String, pathBase: String) {
