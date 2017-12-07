@@ -4,6 +4,7 @@
 build/
 **/build
 /captures
+out/
 
 .gradle
 
