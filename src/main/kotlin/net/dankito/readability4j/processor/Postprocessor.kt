@@ -14,8 +14,7 @@ open class Postprocessor {
         val AbsoluteUriPattern = Pattern.compile("^[a-zA-Z][a-zA-Z0-9\\+\\-\\.]*:")
 
 
-        // These are the IDs and classes that readability sets itself.
-        val IDS_TO_PRESERVE = Arrays.asList("readability-content", "readability-page-1")
+        // These are the classes that readability sets itself.
         val CLASSES_TO_PRESERVE = Arrays.asList("readability-styled", "page")
 
         private val log = LoggerFactory.getLogger(Postprocessor::class.java)
@@ -27,8 +26,9 @@ open class Postprocessor {
         fixRelativeUris(articleContent, articleUri)
 
         // Remove IDs and classes.
+        // Remove classes.
         val classesToPreserve = Arrays.asList(CLASSES_TO_PRESERVE, additionalClassesToPreserve).flatten().toSet()
-        cleanIDsAndClasses(articleContent, classesToPreserve)
+        cleanClasses(articleContent, classesToPreserve)
     }
 
 
@@ -117,15 +117,11 @@ open class Postprocessor {
 
 
     /**
-     * Removes the id="" and class="" attribute from every element in the given
-     * subtree, except those that match IDS_TO_PRESERVE, CLASSES_TO_PRESERVE and
+     * Removes the class="" attribute from every element in the given
+     * subtree, except those that match CLASSES_TO_PRESERVE and
      * the classesToPreserve array from the options object.
      */
-    protected open fun cleanIDsAndClasses(node: Element, classesToPreserve: Set<String>) {
-        if(IDS_TO_PRESERVE.contains(node.id()) == false) {
-            node.removeAttr("id")
-        }
-
+    protected open fun cleanClasses(node: Element, classesToPreserve: Set<String>) {
         val classNames = node.classNames().filter { classesToPreserve.contains(it) }
 
         if(classNames.isNotEmpty()) {
@@ -136,7 +132,7 @@ open class Postprocessor {
         }
 
         node.children().forEach { child ->
-            cleanIDsAndClasses(child, classesToPreserve)
+            cleanClasses(child, classesToPreserve)
         }
     }
 
