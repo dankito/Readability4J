@@ -1,34 +1,26 @@
 package net.dankito.readability4j.util
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import net.dankito.readability4j.Article
 import net.dankito.readability4j.Readability4J
-import net.dankito.readability4j.model.ArticleMetadata
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.slf4j.LoggerFactory
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStreamWriter
-import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 
 
 fun main(args: Array<String>) {
-    TestDataGenerator().generateTestData("", "") // set test case name and url here
+    TestDataGenerator().generateTestData("additional-test-pages", "",
+            "") // set test case name and url here
 }
 
 
-class TestDataGenerator {
+class TestDataGenerator : TestDataGeneratorBase() {
 
     companion object {
         const val DefaultUserAgent = ""
 
         const val DefaultCountRetries = 1
-
-        val objectMapper = ObjectMapper()
 
         val client: OkHttpClient
 
@@ -51,14 +43,14 @@ class TestDataGenerator {
 
 
     @Throws(Exception::class)
-    fun generateTestData(testCaseName: String, url: String) {
+    fun generateTestData(testFolderName: String, testCaseName: String, url: String) {
         val webSiteHtml = getResponse(url)
 
         val readability = Readability4J(url, webSiteHtml)
 
         val article = readability.parse()
 
-        writeTestData(webSiteHtml, article, testCaseName)
+        writeTestData(webSiteHtml, article, testFolderName, testCaseName)
     }
 
 
@@ -96,45 +88,6 @@ class TestDataGenerator {
         requestBuilder.header("User-Agent", userAgent)
 
         return requestBuilder.build()
-    }
-
-
-    private fun writeTestData(sourceHtml: String, article: Article, testCaseName: String) {
-        val testPagesFolder = getPathToTestPagesFolder()
-
-        val testCaseFolder = File(testPagesFolder, testCaseName)
-        if(testCaseFolder.exists() == false) {
-            testCaseFolder.mkdirs()
-        }
-
-        writeFile(testCaseFolder, "source.html", sourceHtml)
-        writeFile(testCaseFolder, "expected.html", article.content ?: "")
-        writeFile(testCaseFolder, "expected-metadata.json", generateMetadataJson(article))
-    }
-
-    private fun generateMetadataJson(article: Article): String {
-        val metadata = ArticleMetadata(article.title, article.byline, article.excerpt, article.dir)
-
-        return objectMapper.writeValueAsString(metadata)
-    }
-
-    private fun writeFile(testCaseFolder: File, fileName: String, fileContent: String) {
-        val writer = OutputStreamWriter(FileOutputStream(File(testCaseFolder, fileName)), Charset.forName("UTF-8").newEncoder()) // TODO: set encoding
-
-        writer.write(fileContent)
-
-        writer.flush()
-        writer.close()
-    }
-
-    private fun getPathToTestPagesFolder(): File {
-        val testPageResourceUrl = this.javaClass.classLoader.getResource("logback-test.xml") // get url to any test resource that's for sure there
-        val testPageResourceFile = File(testPageResourceUrl.toURI())
-
-        val readability4JFolder = testPageResourceFile.parentFile.parentFile.parentFile.parentFile
-        val testResourcesFolder = File(File(File(readability4JFolder, "src"), "test"), "resources")
-
-        return File(testResourcesFolder, "additional-test-pages")
     }
 
 }
