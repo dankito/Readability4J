@@ -953,7 +953,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
                         (img > 1 && p / img.toFloat() < 0.5 && !hasAncestorTag(node, "figure")) ||
                                 (!isList && li > p) ||
                                 (input > Math.floor(p/3.0)) ||
-                                (!isList && contentLength < 25 && (img == 0 || img > 2) && !hasAncestorTag(node, "figure")) ||
+                                (!isList && contentLength < 25 && img == 0 && !hasAncestorTag(node, "figure")) ||
                                 (!isList && weight < 25 && linkDensity > 0.2) ||
                                 (weight >= 25 && linkDensity > 0.5) ||
                                 ((embedCount == 1 && contentLength < 75) || embedCount > 1)
