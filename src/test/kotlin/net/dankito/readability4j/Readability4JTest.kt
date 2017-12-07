@@ -1,7 +1,5 @@
 package net.dankito.readability4j
 
-import net.dankito.readability4j.model.PageTestData
-import org.jsoup.Jsoup
 import org.junit.Test
 
 open class Readability4JTest : Readability4JTestBase() {
@@ -381,119 +379,6 @@ open class Readability4JTest : Readability4JTestBase() {
 
     protected open fun testPage(pageName: String) {
         testPage(ReadabilityFakeTestUrl, "test-pages", pageName)
-    }
-
-    override fun getExpectedText(testData: PageTestData): String? {
-        if(testData.pageName == "002") { // for this special case i really found no otherway to handle white spaces than to remove them all
-            return Jsoup.parse(testData.expectedOutput).body().html().replace(" ", "")
-        }
-
-        // Readability tests don't use Readability's real output but a parsed one which removes some tags. So i created with Readability's JavaScript code expected files with its real output
-        val expectedElement = Jsoup.parse(testData.expectedOutput).body()
-        // on each parsing step Jsoup adds new new lines. As actual is parsed twice we also have to parse expected twice
-        return Jsoup.parse(expectedElement.html()).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ") // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
-    }
-
-    override fun getActualText(article: Article, testData: PageTestData): String? {
-        if(testData.pageName == "002") { // for this special case i really found no otherway to handle white spaces than to remove them all
-            return article.content?.replace(" ", "")
-        }
-
-        val actual = Jsoup.parse(article.content).body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ") // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
-        return fixArticleContentWhitespacesForSameTestCases(testData, actual) // Jsoup in some cases introduces news lines that aren't in source html -> remove these
-    }
-
-    protected open fun fixArticleContentWhitespacesForSameTestCases(testData: PageTestData, actual: String): String {
-        if(testData.pageName == "yahoo-2") {
-            return actual.replace("<p> <span>", "<p><span>").replace("</span> </p>", "</span></p>")
-                    .replace("         <p> ", "         <p>").replace("photo via AP) </p>", "photo via AP)</p>")
-        }
-        else if(testData.pageName == "blogger") {
-            return actual.replace(" in larger quantities.", " in larger quantities. ").replace("\" between them.", "\" between them. ")
-                    .replace(") placement:", ") placement: ").replace(">GreenPak Designer</a>.", ">GreenPak Designer</a>. ")
-                    .replace(", pull requests are even better,", ", pull requests are even better, ").replace(" it's coming together.", " it's coming together. ")
-        }
-        else if(testData.pageName == "svg-parsing") {
-            var actualWithExpandedPolygonTags = actual
-            var startTagIndex = actualWithExpandedPolygonTags.indexOf("<polygon ")
-            while(startTagIndex > 0) {
-                val endTagIndex = actualWithExpandedPolygonTags.indexOf(" />", startTagIndex)
-                actualWithExpandedPolygonTags = actualWithExpandedPolygonTags.replaceRange(endTagIndex, endTagIndex + " />".length, "></polygon>")
-
-                startTagIndex = actualWithExpandedPolygonTags.indexOf("<polygon ", endTagIndex)
-            }
-
-            return actualWithExpandedPolygonTags
-        }
-        else if(testData.pageName == "table-style-attributes") {
-            return actual.replace("</span></b></span><br>", "</span></b> </span><br>")
-        }
-        else if(testData.pageName == "clean-links") {
-            return actual.replace("</p><p> <i>Imprimis</i>:", "</p> <p> <i>Imprimis</i>:")
-        }
-        else if(testData.pageName == "embedded-videos") {
-            return actual.replace("<p><iframe ", "<p> <iframe ").replace("</iframe></p>", "</iframe> </p>")
-        }
-        else if(testData.pageName == "ehow-1") {
-            return actual.replace("\n   <h2>Featured</h2>", "")
-        }
-        else if(testData.pageName == "qq") {
-            return actual.replace("<p> <span", "<p><span")
-        }
-        else if(testData.pageName == "remove-extra-brs") {
-            val index = actual.indexOf("  <p></p>")
-            return actual.replaceRange(index, index + "  <p></p>".length, "  <p> </p>")
-        }
-        else if(testData.pageName == "links-in-tables") {
-            return actual.replace("<td><p dir=", "<td> <p dir=")
-        }
-        else if(testData.pageName == "002") {
-            return actual.replace("  <span>// res instanceof Response", "      <span>// res instanceof Response")
-                    .replace("  method<span>:</span>", "      method<span>:</span>")
-        }
-        else if(testData.pageName == "iab-1") {
-            val doc = Jsoup.parse(actual.replace("<p><a ", "<p> <a "))
-            doc.select("figure").first().parent().parent().remove()
-            return doc.body().html().replace(replaceWhiteSpacesAfterClosingTagRegex, ">\n ").replace(" </div>  ", " </div> ")
-        }
-
-        return actual
-    }
-
-
-    override fun getExpectedTitle(testData: PageTestData): String? {
-        return testData.expectedMetadata.title?.let { regEx.normalize(it.replace("| Herald Sun", "").trim()) } // Readability doesn't normalize title but we do; Readability is not able to remove | Herald Sun while we do
-    }
-
-    override fun getExpectedExcerpt(testData: PageTestData): String? {
-        return testData.expectedMetadata.excerpt?.let { regEx.normalize(it) } // Readability doesn't normalize excerpt but we do
-    }
-
-    override fun getActualExcerpt(testData: PageTestData, article: Article): String? {
-        return fixExcerptForSomeTestCases(testData, article.excerpt) // Readability has a bug to extract og:description -> fix these
-    }
-
-    override fun getExpectedByline(testData: PageTestData): String? {
-        return testData.expectedMetadata.byline?.let { regEx.normalize(it) } // Readability doesn't normalize byline but we do
-    }
-
-    protected open fun fixExcerptForSomeTestCases(testData: PageTestData, excerpt: String?): String? {
-        if(testData.pageName == "blogger") {
-            return excerpt?.replace(" the blog at work so I figured I'm long overdue for one on Silic...", "")
-        }
-        else if(testData.pageName == "links-in-tables") {
-            return excerpt?.replace("  Android users are downloading tens of billions of apps and games on Google Pla...", "")
-        }
-        else if(testData.pageName == "svg-parsing") {
-            return excerpt?.replace("eiusmod tempor", "eiusmod\ntempor")?.replace("veniam, quis", "veniam,\nquis")
-                    ?.replace("commodo consequat", "commodo\nconsequat")?.replace("esse cillum", "esse\ncillum")
-                    ?.replace("non proident", "non\nproident")
-        }
-        else if(testData.pageName == "mozilla-2") {
-            return "Get to know the features that make it the most complete browser for building the Web."
-        }
-
-        return excerpt
     }
 
 }

@@ -1,7 +1,6 @@
 {
-  "title": "linux video",
-  "byline": null,
-  "dir": null,
-  "excerpt": "linux usability\n    ...or, why do I bother. © 2002, 2003\n        Jamie Zawinski",
-  "readerable": true
+  "title" : "linux video",
+  "byline" : null,
+  "excerpt" : "linux usability ...or, why do I bother. © 2002, 2003 Jamie Zawinski",
+  "dir" : null
 }
