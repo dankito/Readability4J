@@ -17,8 +17,22 @@ Maven:
 
 ## Usage
 
+```java
+String url = ...;
+String html = ...;
+
+Readability4J readability4J = new Readability4J(url, html); // url is just needed to resolve relative urls
+Article article = readability4J.parse();
+
+String extractedContentHtml = article.getContent();
+String extractedContentPlainText = article.getTextContent();
+String title = article.getTitle();
+String byline = article.getByline();
+String excerpt = article.getExcerpt();
+```
 
 ## Compatibility to Mozilla‘s Readability
+
 As mentioned before, this is almost an exact copy of Mozilla's Readability. But since I didn't find the original code very readable itself, I extracted some parts from the 2000 lines of code into a new classes:
 
 <table>
@@ -46,6 +60,19 @@ As mentioned before, this is almost an exact copy of Mozilla's Readability. But 
 
 
 Overview of which Mozilla‘s Readability commit a Readability4J version matches:
+
+<table>
+    <tr>
+        <th>Version</td>
+        <th>Commit</td>
+        <th>Date</td>
+    </tr>
+    <tr>
+        <td>1.0</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
 
 # License
 
