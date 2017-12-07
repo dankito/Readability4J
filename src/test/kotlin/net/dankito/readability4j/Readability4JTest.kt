@@ -7,6 +7,8 @@ import org.junit.Test
 open class Readability4JTest : Readability4JTestBase() {
 
     companion object {
+        const val ReadabilityFakeTestUrl = "http://fakehost/test/page.html"
+
         protected val replaceWhiteSpacesAfterClosingTagRegex = ">\\s+\n ".toRegex() // Jsoup in some cases adds white spaces between closing tag and new line -> remove these
     }
 
@@ -378,7 +380,7 @@ open class Readability4JTest : Readability4JTestBase() {
 
 
     protected open fun testPage(pageName: String) {
-        testPage("http://fakehost/test/page.html", "test-pages", pageName)
+        testPage(ReadabilityFakeTestUrl, "test-pages", pageName)
     }
 
     override fun getExpectedText(testData: PageTestData): String? {
