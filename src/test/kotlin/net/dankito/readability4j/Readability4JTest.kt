@@ -70,6 +70,11 @@ open class Readability4JTest : Readability4JTestBase() {
     }
 
     @Test
+    fun testCnetSvgClasses() {
+        testPage("cnet-svg-classes")
+    }
+
+    @Test
     fun testCNN() {
         testPage("cnn")
     }

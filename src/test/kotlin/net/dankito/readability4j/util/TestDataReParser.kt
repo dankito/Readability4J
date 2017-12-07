@@ -33,7 +33,7 @@ class TestDataReParser : TestDataGeneratorBase() {
         Arrays.asList(
 
                 "001", "002", "ars-1", "base-url", "basic-tags-cleaning", "bbc-1", "blogger",
-                "breitbart", "bug-1255978", "buzzfeed-1", "clean-links", "cnet", "cnn",
+                "breitbart", "bug-1255978", "buzzfeed-1", "clean-links", "cnet", "cnet-svg-classes", "cnn",
                 "comment-inside-script-parsing", "daringfireball-1", "ehow-1", "ehow-2",
                 "embedded-videos", "gmw", "heise", "herald-sun-1", "iab-1", "ietf-1",
                 "keep-images", "lemonde-1", "liberation-1", "lifehacker-post-comment-load",
