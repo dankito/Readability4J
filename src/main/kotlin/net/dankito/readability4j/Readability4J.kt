@@ -43,7 +43,10 @@ open class Readability4J {
      */
     constructor(uri: String, html: String) : this(uri, html, ReadabilityOptions())
 
-    constructor(uri: String, html: String, options: ReadabilityOptions = ReadabilityOptions()) : this(uri, Jsoup.parse(html, uri), options)
+    constructor(uri: String, html: String, options: ReadabilityOptions = ReadabilityOptions(), regExUtil: RegExUtil = RegExUtil(),
+                preprocessor: Preprocessor = Preprocessor(regExUtil), metadataParser: MetadataParser = MetadataParser(regExUtil),
+                articleGrabber: ArticleGrabber = ArticleGrabber(options, regExUtil), postprocessor: Postprocessor = Postprocessor())
+            : this(uri, Jsoup.parse(html, uri), options, regExUtil, preprocessor, metadataParser, articleGrabber, postprocessor)
 
     // for Java interoperability
     /**
@@ -51,16 +54,18 @@ open class Readability4J {
      */
     constructor(uri: String, document: Document) : this(uri, document, ReadabilityOptions())
 
-    constructor(uri: String, document: Document, options: ReadabilityOptions = ReadabilityOptions()) {
+    constructor(uri: String, document: Document, options: ReadabilityOptions = ReadabilityOptions(), regExUtil: RegExUtil = RegExUtil(),
+                preprocessor: Preprocessor = Preprocessor(regExUtil), metadataParser: MetadataParser = MetadataParser(regExUtil),
+                articleGrabber: ArticleGrabber = ArticleGrabber(options, regExUtil), postprocessor: Postprocessor = Postprocessor()) {
         this.uri = uri
         this.document = document
         this.options = options
 
-        this.regEx = RegExUtil()
-        this.preprocessor = Preprocessor(regEx)
-        this.metadataParser = MetadataParser(regEx)
-        this.articleGrabber = ArticleGrabber(options, regEx)
-        this.postprocessor = Postprocessor()
+        this.regEx = regExUtil
+        this.preprocessor = preprocessor
+        this.metadataParser = metadataParser
+        this.articleGrabber = articleGrabber
+        this.postprocessor = postprocessor
     }
 
 
