@@ -59,10 +59,7 @@ abstract class Readability4JTestBase {
     }
 
     protected open fun testPage(url: String, testData: PageTestData): Article {
-        // Provide one class name to preserve, which we know appears in a few
-        // of the test documents.
-        val underTest = Readability4J(url, testData.sourceHtml,
-                ReadabilityOptions(additionalClassesToPreserve = Arrays.asList("caption")))
+        val underTest = createReadability4J(url, testData)
 
         val article = underTest.parse()
 
@@ -78,6 +75,13 @@ abstract class Readability4JTestBase {
         testMetadata(testData, article)
 
         return article
+    }
+
+    protected open fun createReadability4J(url: String, testData: PageTestData): Readability4J {
+        // Provide one class name to preserve, which we know appears in a few
+        // of the test documents.
+        return Readability4J(url, testData.sourceHtml,
+                ReadabilityOptions(additionalClassesToPreserve = Arrays.asList("caption")))
     }
 
 
