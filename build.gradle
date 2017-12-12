@@ -1,6 +1,6 @@
 group 'net.dankito.readability4j'
 version '1.0'
-def artifactId = "readability4j"
+def mavenArtifactId = "readability4j"
 
 buildscript {
     ext {
@@ -105,8 +105,8 @@ uploadArchives {
             }
 
             pom.project {
-                name artifactId
-                artifactId = artifactId
+                name mavenArtifactId
+                artifactId = mavenArtifactId
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description "A Kotlin port of Mozilla‘s Readability. It extracts a website‘s relevant content and removes all clutter from it."
