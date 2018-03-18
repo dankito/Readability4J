@@ -9,6 +9,12 @@ import java.util.*
 
 open class AdditionalReadability4JExtendedTests : AdditionalReadability4JTests() {
 
+    // TODO: http://www.kleinezeitung.at/oesterreich/5298693/Maskottchen-bestraft_Verhuellungsverbot_In-Wien-musste-ein-Hai
+
+    // TODO: https://www.nytimes.com/interactive/2017/12/19/us/ford-chicago-sexual-harassment.html
+
+    // TODO: https://www.republik.ch/2018/02/19/interview-eribon-teil1
+
     override fun createReadability4J(url: String, testData: PageTestData): Readability4J {
         // Provide one class name to preserve, which we know appears in a few
         // of the test documents.
