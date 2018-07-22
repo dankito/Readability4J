@@ -100,7 +100,7 @@ open class Readability4J {
         log.debug("Grabbed: $articleContent")
 
         articleContent?.let { // TODO: or return null if grabbing didn't work?
-            postprocessor.postProcessContent(articleContent, uri, options.additionalClassesToPreserve)
+            postprocessor.postProcessContent(document, articleContent, uri, options.additionalClassesToPreserve)
 
             article.articleContent = articleContent
         }

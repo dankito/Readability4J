@@ -1,10 +1,11 @@
 package net.dankito.readability4j.processor
 
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
 import org.slf4j.LoggerFactory
 import java.net.URI
-import java.util.*
+import java.util.Arrays
 import java.util.regex.Pattern
 
 
@@ -21,9 +22,10 @@ open class Postprocessor {
     }
     
 
-    open fun postProcessContent(articleContent: Element, articleUri: String, additionalClassesToPreserve: Collection<String> = emptyList()) {
+    open fun postProcessContent(originalDocument: Document, articleContent: Element, articleUri: String,
+                                additionalClassesToPreserve: Collection<String> = emptyList()) {
         // Readability cannot open relative uris so we convert them to absolute uris.
-        fixRelativeUris(articleContent, articleUri)
+        fixRelativeUris(originalDocument, articleContent, articleUri)
 
         // Remove IDs and classes.
         // Remove classes.
@@ -36,17 +38,23 @@ open class Postprocessor {
      * Converts each <a> and <img> uri in the given element to an absolute URI,
      * ignoring #ref URIs.
      */
-    protected open fun fixRelativeUris(element: Element, articleUri: String) {
+    protected open fun fixRelativeUris(originalDocument: Document, element: Element, articleUri: String) {
         try {
             val uri = URI.create(articleUri)
             val scheme = uri.scheme
             val prePath = uri.scheme + "://" + uri.host
             val pathBase = uri.scheme + "://" + uri.host + uri.path.substring(0, uri.path.lastIndexOf("/") + 1)
 
-            fixRelativeAnchorUris(element, scheme, prePath, pathBase)
-
-            fixRelativeImageUris(element, scheme, prePath, pathBase)
+            fixRelativeUris(originalDocument, element, scheme, prePath, pathBase)
         } catch(e: Exception) { log.error("Could not fix relative urls for $element with base uri $articleUri", e) }
+    }
+
+    protected open fun fixRelativeUris(originalDocument: Document, element: Element, scheme: String, prePath: String,
+                                       pathBase: String) {
+
+        fixRelativeAnchorUris(element, scheme, prePath, pathBase)
+
+        fixRelativeImageUris(element, scheme, prePath, pathBase)
     }
 
     protected open fun fixRelativeAnchorUris(element: Element, scheme: String, prePath: String, pathBase: String) {
