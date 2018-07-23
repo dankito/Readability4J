@@ -22,8 +22,17 @@ open class PostprocessorExtended : Postprocessor() {
 
     override fun fixRelativeImageUri(img: Element, scheme: String, prePath: String, pathBase: String) {
         val dataSrc = img.attr("data-src") // load data-src;
+        val dataOriginal = img.attr("data-original")
+        val dataActualSrc = img.attr("data-actualsrc")
+
         if(dataSrc.isNotBlank()) {
             img.attr("src", toAbsoluteURI(dataSrc, scheme, prePath, pathBase))
+        }
+        else if(dataOriginal.isNotBlank()) {
+            img.attr("src", toAbsoluteURI(dataOriginal, scheme, prePath, pathBase))
+        }
+        else if(dataActualSrc.isNotBlank()) {
+            img.attr("src", toAbsoluteURI(dataActualSrc, scheme, prePath, pathBase))
         }
         else {
             super.fixRelativeImageUri(img, scheme, prePath, pathBase)
