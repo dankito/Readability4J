@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import java.util.*
+import java.util.Arrays
 
 
 fun main(args: Array<String>) {
@@ -61,10 +61,13 @@ class TestDataReParser : TestDataGeneratorBase() {
     private fun reParseAdditionalTestData() {
         reParseAdditionalTestData("http://www.bento.de/haha/jamaika-aus-hier-sind-exklusiv-die-satirischen-fdp-wahlplakate-fuer-die-neuwahlen-1876078/", "bento-1")
         reParseAdditionalTestData("http://www.faz.net/aktuell/wirtschaft/unternehmen/bmw-steckt-viel-geld-in-erforschung-der-batteriezelle-15308519.html", "faz-1")
+        reParseAdditionalTestData("http://www.faz.net/aktuell/politik/spd-sonderparteitag-begeisternde-rede-von-andrea-nahles-15410318-p2.html", "faz-2")
+        reParseAdditionalTestData("http://www.shgjj.com/html/zyxw/101770.html", "shgjj-1")
         reParseAdditionalTestData("http://www.spiegel.de/politik/deutschland/fdp-vize-wolfgang-kubicki-weist-gruenen-angriffe-scharf-zurueck-a-1180321.html", "spiegel-1")
         reParseAdditionalTestData("http://www.sueddeutsche.de/wirtschaft/dienstleistungsgesellschaft-geiz-macht-arm-1.3764236", "sueddeutsche-1")
         reParseAdditionalTestData("https://projekte.sueddeutsche.de/paradisepapers/wirtschaft/carstensen-und-der-pharma-milliardaer-e624335/", "sueddeutsche-paradise-papers")
         reParseAdditionalTestData("http://www.zeit.de/2017/48/simbabwes-jugend-robert-mugabe-ruecktritt", "zeit-1")
+        reParseAdditionalTestData("https://zhuanlan.zhihu.com/p/22049205", "zhihu-1")
     }
 
     private fun reParseAdditionalTestData(url: String, testCaseName: String) {
