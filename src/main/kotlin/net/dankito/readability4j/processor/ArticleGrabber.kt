@@ -730,6 +730,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
         this.clean(articleContent, "embed")
         this.clean(articleContent, "h1")
         this.clean(articleContent, "footer")
+        this.clean(articleContent, "link")
 
         // Clean out elements have "share" in their id/class combinations from final top candidates,
         // which means we don't remove the top candidates even they have "share".
