@@ -7,7 +7,7 @@ open class RegExUtil {
 
     companion object {
         const val UnlikelyCandidatesDefaultPattern = "banner|breadcrumbs|combx|comment|community|cover-wrap|disqus|extra|" +
-                "foot|header|legends|menu|modal|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|" +
+                "foot|header|legends|menu|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|" +
                 "ad-break|agegate|pagination|pager|popup|yom-remote"
 
         const val OkMaybeItsACandidateDefaultPattern = "and|article|body|column|main|shadow"
@@ -15,7 +15,7 @@ open class RegExUtil {
         const val PositiveDefaultPattern = "article|body|content|entry|hentry|h-entry|main|page|pagination|post|text|blog|story"
 
         const val NegativeDefaultPattern = "hidden|^hid$| hid$| hid |^hid |banner|combx|comment|com-|contact|foot|footer|footnote|" +
-                "masthead|media|meta|modal|outbrain|promo|related|scroll|share|shoutbox|sidebar|skyscraper|sponsor|shopping|tags|tool|widget"
+                "masthead|media|meta|outbrain|promo|related|scroll|share|shoutbox|sidebar|skyscraper|sponsor|shopping|tags|tool|widget"
 
         const val ExtraneousDefaultPattern = "print|archive|comment|discuss|e[\\-]?mail|share|reply|all|login|sign|single|utility"
 
