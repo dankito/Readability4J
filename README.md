@@ -84,6 +84,11 @@ Overview of which Mozilla‘s Readability.js commit a Readability4J version matc
         <td>8da91b9</td>
         <td>12/5/17</td>
     </tr>
+    <tr>
+        <td>1.0.1</td>
+        <td>d598baf</td>
+        <td>02/27/18</td>
+    </tr>
 </table>
 
 ## Extensibility
