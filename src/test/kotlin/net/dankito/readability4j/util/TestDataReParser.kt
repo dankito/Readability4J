@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
-import java.util.Arrays
+import java.util.*
 
 
 fun main(args: Array<String>) {
@@ -36,7 +36,7 @@ class TestDataReParser : TestDataGeneratorBase() {
                 "breitbart", "bug-1255978", "buzzfeed-1", "clean-links", "cnet", "cnet-svg-classes", "cnn",
                 "comment-inside-script-parsing", "daringfireball-1", "ehow-1", "ehow-2",
                 "embedded-videos", "gmw", "heise", "herald-sun-1", "iab-1", "ietf-1",
-                "keep-images", "lemonde-1", "liberation-1", "lifehacker-post-comment-load",
+                "keep-images", "la-nacion", "lemonde-1", "liberation-1", "lifehacker-post-comment-load",
                 "lifehacker-working", "links-in-tables", "lwn-1", "medium-1", "medium-2", "medium-3",
                 "missing-paragraphs", "mozilla-1", "mozilla-2", "msn", "normalize-spaces",
                 "nytimes-1", "nytimes-2", "pixnet", "qq", "remove-extra-brs",
