@@ -97,7 +97,7 @@ open class Readability4J {
         val metadata = metadataParser.getArticleMetadata(document)
 
         val articleContent = articleGrabber.grabArticle(document, metadata)
-        log.debug("Grabbed: $articleContent")
+        log.debug("Grabbed: {}", articleContent)
 
         articleContent?.let { // TODO: or return null if grabbing didn't work?
             postprocessor.postProcessContent(document, articleContent, uri, options.additionalClassesToPreserve)

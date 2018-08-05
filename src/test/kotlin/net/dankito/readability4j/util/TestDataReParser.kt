@@ -4,7 +4,6 @@ import net.dankito.readability4j.Readability4J
 import net.dankito.readability4j.Readability4JTest
 import net.dankito.readability4j.extended.Readability4JExtended
 import net.dankito.readability4j.model.ReadabilityOptions
-import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -17,11 +16,6 @@ fun main(args: Array<String>) {
 
 
 class TestDataReParser : TestDataGeneratorBase() {
-
-    companion object {
-        private val log = LoggerFactory.getLogger(TestDataReParser::class.java)
-    }
-
 
     fun reParseTestData() {
         reParseMozillasTestData()

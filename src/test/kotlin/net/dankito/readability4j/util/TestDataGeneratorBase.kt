@@ -3,7 +3,6 @@ package net.dankito.readability4j.util
 import com.fasterxml.jackson.databind.ObjectMapper
 import net.dankito.readability4j.Article
 import net.dankito.readability4j.model.ArticleMetadata
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
@@ -14,8 +13,6 @@ abstract class TestDataGeneratorBase {
 
     companion object {
         val objectMapper = ObjectMapper()
-
-        private val log = LoggerFactory.getLogger(TestDataGeneratorBase::class.java)
     }
 
 

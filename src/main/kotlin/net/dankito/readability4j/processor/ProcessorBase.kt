@@ -42,7 +42,7 @@ abstract class ProcessorBase {
         else
             "\n------\n" + node.outerHtml() + "\n------\n"
 
-        log.debug("$reason [$nodeToString]")
+        log.debug("{} [{}]", reason, nodeToString)
     }
 
 
