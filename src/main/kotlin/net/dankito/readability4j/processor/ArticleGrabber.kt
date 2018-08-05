@@ -90,7 +90,7 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
             // Now that we have the top candidate, look through its siblings for content
             // that might also be related. Things like preambles, content split by ads
             // that we removed, etc.
-            val articleContent = createArticleContent(doc, topCandidate, isPaging)
+            var articleContent = createArticleContent(doc, topCandidate, isPaging)
 
 
             log.debug("Article content pre-prep: ${articleContent.html()}")
@@ -121,28 +121,47 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
 
             log.debug("Article content after paging: ${articleContent.html()}")
 
+            var parseSuccessful = true
+            val attempts = ArrayList<Pair<Element, Int>>()
+
             // Now that we've gone through the full algorithm, check to see if
             // we got any meaningful content. If we didn't, we may need to re-run
             // grabArticle with different flags set. This gives us a higher likelihood of
             // finding the content, and the sieve approach gives us a higher likelihood of
             // finding the -right- content.
-            if(getInnerText(articleContent, regEx, true).length < this.wordThreshold) {
+            val textLength = getInnerText(articleContent, regEx, true).length
+            if(textLength < this.wordThreshold) {
+                parseSuccessful = false
                 page.html(pageCacheHtml)
 
                 if(options.stripUnlikelyCandidates) {
                     options.stripUnlikelyCandidates = false
+                    attempts.add(Pair(articleContent, textLength))
                 }
                 else if(options.weightClasses) {
                     options.weightClasses = false
+                    attempts.add(Pair(articleContent, textLength))
                 }
                 else if(options.cleanConditionally) {
                     options.cleanConditionally = false
+                    attempts.add(Pair(articleContent, textLength))
                 }
                 else {
-                    return null
+                    attempts.add(Pair(articleContent, textLength))
+                    // No luck after removing flags, just return the longest text we found during the different loops
+                    attempts.sortBy { it.second }
+
+                    // But first check if we actually have something
+                    if (attempts.isEmpty() || attempts[0].second <= 0) {
+                        return null
+                    }
+
+                    articleContent = attempts[0].first
+                    parseSuccessful = true
                 }
             }
-            else {
+
+            if(parseSuccessful) {
                 // Find out text direction from ancestors of final top candidate.
                 getTextDirection(topCandidate, doc)
 

@@ -120,6 +120,11 @@ open class Readability4JTest : Readability4JTestBase() {
     }
 
     @Test
+    fun testHukumusume() {
+        testPage("hukumusume")
+    }
+
+    @Test
     fun testIab1() {
         testPage("iab-1")
     }
@@ -132,6 +137,11 @@ open class Readability4JTest : Readability4JTestBase() {
     @Test
     fun testKeepImages() {
         testPage("keep-images")
+    }
+
+    @Test
+    fun testLaNacion() {
+        testPage("la-nacion")
     }
 
     @Test
