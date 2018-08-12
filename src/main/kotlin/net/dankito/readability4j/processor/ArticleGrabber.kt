@@ -767,13 +767,14 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
                 if(articleTitle.length > 0) {
                     val lengthSimilarRate = (h2[0].text().length - articleTitle.length) / articleTitle.length.toFloat()
                     if (Math.abs(lengthSimilarRate) < 0.5) {
-                        var titlesMatch = false
-                        if(lengthSimilarRate > 0) {
-                            titlesMatch = h2[0].text().contains(articleTitle)
-                        } 
-                        else {
-                            titlesMatch = articleTitle.contains(h2[0].text())
-                        }
+                        val titlesMatch =
+                            if(lengthSimilarRate > 0) {
+                                h2[0].text().contains(articleTitle)
+                            }
+                            else {
+                                articleTitle.contains(h2[0].text())
+                            }
+
                         if(titlesMatch) {
                             this.clean(articleContent, "h2")
                         }
