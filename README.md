@@ -1,4 +1,4 @@
-# Readability4
+# Readability4J
 
 Readability4J is a Kotlin port of Mozilla's Readability.js, which is used for Firefox's reader view: https://github.com/mozilla/readability.
 
@@ -72,8 +72,8 @@ Article article = readability4J.parse();
 As users noted (see Issue [#1](https://github.com/dankito/Readability4J/issues/1) and [#2](https://github.com/dankito/Readability4J/issues/2))
 by default no encoding is applied to Readability4J's output resulting in incorrect display of non-ASCII characters.
 
-The reason is Readability returns its output in a &lt;div> element, and the only way to set the encoding in HTML is 
-in a &lt;head>&lt;meta charset=""> tag.
+The reason is like Readability.js Readability4J returns its output in a &lt;div> element, and the only way to set the 
+encoding in HTML is in a &lt;head>&lt;meta charset=""> tag.
 
 So I added these convenience methods to Article class
 
