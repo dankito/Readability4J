@@ -1,4 +1,5 @@
 # Readability4
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.dankito.readability4j/readability4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.dankito.readability4j/readability4j)
 
 Readability4J is a Kotlin port of Mozilla's Readability.js, which is used for Firefox's reader view: https://github.com/mozilla/readability.
 
