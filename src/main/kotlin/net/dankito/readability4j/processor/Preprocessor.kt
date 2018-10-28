@@ -63,7 +63,10 @@ open class Preprocessor(protected val regEx: RegExUtil = RegExUtil()) : Processo
             val imagesToKeep = ArrayList(images)
 
             images.forEach { image ->
-                if(document.select("img[src=${image.attr("src")}]").size > 0) {
+                // thanks to swuqi (https://github.com/swuqi) for reporting this bug.
+                // see https://github.com/dankito/Readability4J/issues/4
+                val source = image.attr("src")
+                if(source.isNotBlank() && document.select("img[src=$source]").size > 0) {
                     imagesToKeep.remove(image)
                 }
             }

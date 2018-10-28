@@ -11,6 +11,13 @@ open class AdditionalReadability4JTests : Readability4JTestBase() {
 
 
     @Test
+    fun fixImgElementsWithoutSrcAttributes() {
+        // see https://github.com/dankito/Readability4J/issues/4
+        testPage("https://www.msn.com/en-us/news/technology/facebook-says-attackers-stole-details-from-29-mln-users/ar-BBOiiJa", "fix-img-without-src")
+    }
+
+
+    @Test
     fun testBento1() {
         testPage("http://www.bento.de/haha/jamaika-aus-hier-sind-exklusiv-die-satirischen-fdp-wahlplakate-fuer-die-neuwahlen-1876078/", "bento-1")
     }
