@@ -6,6 +6,8 @@ import net.dankito.readability4j.processor.ArticleGrabber
 import net.dankito.readability4j.processor.MetadataParser
 import net.dankito.readability4j.processor.Postprocessor
 import net.dankito.readability4j.processor.Preprocessor
+import net.dankito.readability4j.util.DefaultDependencyResolver
+import net.dankito.readability4j.util.IDependencyResolver
 import net.dankito.readability4j.util.RegExUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -37,37 +39,27 @@ open class Readability4J {
     protected val postprocessor: Postprocessor
 
 
-    // TODO: add IDependencyResolver interface and @JvmOverloads
+    @JvmOverloads
+    constructor(uri: String,
+                html: String,
+                options: ReadabilityOptions = ReadabilityOptions(),
+                dependencyResolver: IDependencyResolver = DefaultDependencyResolver())
+            : this(uri, Jsoup.parse(html, uri), options, dependencyResolver)
 
-    // for Java interoperability
-    /**
-     * Calls Readability(String, String, ReadabilityOptions) with default ReadabilityOptions
-     */
-    constructor(uri: String, html: String) : this(uri, html, ReadabilityOptions())
-
-    constructor(uri: String, html: String, options: ReadabilityOptions = ReadabilityOptions(), regExUtil: RegExUtil = RegExUtil(),
-                preprocessor: Preprocessor = Preprocessor(regExUtil), metadataParser: MetadataParser = MetadataParser(regExUtil),
-                articleGrabber: ArticleGrabber = ArticleGrabber(options, regExUtil), postprocessor: Postprocessor = Postprocessor())
-            : this(uri, Jsoup.parse(html, uri), options, regExUtil, preprocessor, metadataParser, articleGrabber, postprocessor)
-
-    // for Java interoperability
-    /**
-     * Calls Readability(String, Document, ReadabilityOptions) with default ReadabilityOptions
-     */
-    constructor(uri: String, document: Document) : this(uri, document, ReadabilityOptions())
-
-    constructor(uri: String, document: Document, options: ReadabilityOptions = ReadabilityOptions(), regExUtil: RegExUtil = RegExUtil(),
-                preprocessor: Preprocessor = Preprocessor(regExUtil), metadataParser: MetadataParser = MetadataParser(regExUtil),
-                articleGrabber: ArticleGrabber = ArticleGrabber(options, regExUtil), postprocessor: Postprocessor = Postprocessor()) {
+    @JvmOverloads
+    constructor(uri: String,
+                document: Document,
+                options: ReadabilityOptions = ReadabilityOptions(),
+                dependencyResolver: IDependencyResolver = DefaultDependencyResolver()) {
         this.uri = uri
         this.document = document
         this.options = options
 
-        this.regEx = regExUtil
-        this.preprocessor = preprocessor
-        this.metadataParser = metadataParser
-        this.articleGrabber = articleGrabber
-        this.postprocessor = postprocessor
+        this.regEx = dependencyResolver.createRegExUtil()
+        this.preprocessor = dependencyResolver.createPreprocessor(regEx)
+        this.metadataParser = dependencyResolver.createMetadataParser(regEx)
+        this.articleGrabber = dependencyResolver.createArticleGrabber(options, regEx)
+        this.postprocessor = dependencyResolver.createPostprocessor()
     }
 
 
