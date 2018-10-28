@@ -37,6 +37,8 @@ open class Readability4J {
     protected val postprocessor: Postprocessor
 
 
+    // TODO: add IDependencyResolver interface and @JvmOverloads
+
     // for Java interoperability
     /**
      * Calls Readability(String, String, ReadabilityOptions) with default ReadabilityOptions
