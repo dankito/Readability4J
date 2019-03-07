@@ -55,6 +55,7 @@ class TestDataReParser : TestDataGeneratorBase() {
     private fun reParseAdditionalTestData() {
         reParseAdditionalTestData("https://www.msn.com/en-us/news/technology/facebook-says-attackers-stole-details-from-29-mln-users/ar-BBOiiJa", "fix-img-without-src")
 
+        reParseAdditionalTestData("https://www.heise.de/tipps-tricks/Daten-in-der-Cloud-sicher-verschluesseln-3952178.html", "amp-img")
         reParseAdditionalTestData("http://www.bento.de/haha/jamaika-aus-hier-sind-exklusiv-die-satirischen-fdp-wahlplakate-fuer-die-neuwahlen-1876078/", "bento-1")
         reParseAdditionalTestData("http://www.faz.net/aktuell/wirtschaft/unternehmen/bmw-steckt-viel-geld-in-erforschung-der-batteriezelle-15308519.html", "faz-1")
         reParseAdditionalTestData("http://www.faz.net/aktuell/politik/spd-sonderparteitag-begeisternde-rede-von-andrea-nahles-15410318-p2.html", "faz-2")

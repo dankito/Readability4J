@@ -1,8 +1,10 @@
 package net.dankito.readability4j.extended.processor
 
 import net.dankito.readability4j.processor.Postprocessor
+import org.jsoup.nodes.Attributes
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.parser.Tag
 
 
 open class PostprocessorExtended : Postprocessor() {
@@ -18,6 +20,12 @@ open class PostprocessorExtended : Postprocessor() {
         else {
             super.fixRelativeUris(originalDocument, element, scheme, prePath, pathBase)
         }
+    }
+
+    override fun fixRelativeImageUris(element: Element, scheme: String, prePath: String, pathBase: String) {
+        super.fixRelativeImageUris(element, scheme, prePath, pathBase)
+
+        fixAmpImageUris(element)
     }
 
     override fun fixRelativeImageUri(img: Element, scheme: String, prePath: String, pathBase: String) {
@@ -36,6 +44,20 @@ open class PostprocessorExtended : Postprocessor() {
         }
         else {
             super.fixRelativeImageUri(img, scheme, prePath, pathBase)
+        }
+    }
+
+    protected open fun fixAmpImageUris(element: Element) {
+        element.getElementsByTag("amp-img").forEach { amp_img ->
+
+            if (amp_img.childNodeSize() == 0) {
+                val attributes = Attributes()
+                attributes.put("decoding", "async")
+                attributes.put("alt", amp_img.attr("alt"))
+                attributes.put("srcset", amp_img.attr("srcset").trim())
+
+                amp_img.appendChild(Element(Tag.valueOf("img"), "", attributes))
+            }
         }
     }
 

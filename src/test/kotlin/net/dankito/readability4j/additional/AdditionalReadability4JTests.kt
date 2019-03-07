@@ -18,6 +18,11 @@ open class AdditionalReadability4JTests : Readability4JTestBase() {
 
 
     @Test
+    fun testAmpImages() {
+        testPage("https://www.heise.de/tipps-tricks/Daten-in-der-Cloud-sicher-verschluesseln-3952178.html", "amp-img")
+    }
+
+    @Test
     fun testBento1() {
         testPage("http://www.bento.de/haha/jamaika-aus-hier-sind-exklusiv-die-satirischen-fdp-wahlplakate-fuer-die-neuwahlen-1876078/", "bento-1")
     }
