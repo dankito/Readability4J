@@ -14,7 +14,7 @@ As it‘s compatible with Mozilla‘s Readability.js it produces exact the same 
 Gradle:
 ```
 dependencies {
-  compile 'net.dankito.readability4j:readability4j:1.0.2'
+  compile 'net.dankito.readability4j:readability4j:1.0.3'
 }
 ```
 
@@ -23,7 +23,7 @@ Maven:
 <dependency>
    <groupId>net.dankito.readability4j</groupId>
    <artifactId>readability4j</artifactId>
-   <version>1.0.2</version>
+   <version>1.0.3</version>
 </dependency>
 ```
 
