@@ -78,6 +78,13 @@ compileTestKotlin {
 
 /*          publish to maven central            */
 
+// set ossrhUsername and ossrhPassword in your gradle.properties (in ~/.gradle/gradle.properties or project's gradle.properties)
+def areOssrhPropertiesSet = isPropertySet('ossrhUsername') && isPropertySet('ossrhPassword')
+
+def isPropertySet(propertyName) {
+    return properties[propertyName] != null &&  ! (properties[propertyName] as String).isEmpty()
+}
+
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
     from javadoc
@@ -103,12 +110,14 @@ uploadArchives {
 
             repository url: repositories.mavenLocal().url
 
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
+            if (areOssrhPropertiesSet) {
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
 
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
             }
 
             pom.project {
