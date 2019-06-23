@@ -13,6 +13,8 @@ open class PostprocessorExtended : Postprocessor() {
         // call before super.postProcessContent() so that afterwards relative urls are made absolute
         makeLazyLoadingUrlsEagerLoading(articleContent)
 
+        fixAmpImageUris(articleContent)
+
         super.postProcessContent(originalDocument, articleContent, articleUri, additionalClassesToPreserve)
     }
 
@@ -36,26 +38,6 @@ open class PostprocessorExtended : Postprocessor() {
         }
     }
 
-
-    override fun fixRelativeUris(originalDocument: Document, element: Element, scheme: String, prePath: String,
-								 pathBase: String) {
-
-        val baseUrl = originalDocument.head().select("base").first()?.attr("href")
-
-        if (baseUrl != null) { // if a base URL is specified use that one
-            super.fixRelativeUris(originalDocument, element, scheme, prePath, baseUrl)
-        }
-        else {
-            super.fixRelativeUris(originalDocument, element, scheme, prePath, pathBase)
-        }
-    }
-
-    override fun fixRelativeImageUris(element: Element, scheme: String, prePath: String, pathBase: String) {
-        super.fixRelativeImageUris(element, scheme, prePath, pathBase)
-
-        fixAmpImageUris(element)
-    }
-
     protected open fun fixAmpImageUris(element: Element) {
         element.getElementsByTag("amp-img").forEach { amp_img ->
 
@@ -67,6 +49,20 @@ open class PostprocessorExtended : Postprocessor() {
 
                 amp_img.appendChild(Element(Tag.valueOf("img"), "", attributes))
             }
+        }
+    }
+
+
+    override fun fixRelativeUris(originalDocument: Document, element: Element, scheme: String, prePath: String,
+								 pathBase: String) {
+
+        val baseUrl = originalDocument.head().select("base").first()?.attr("href")
+
+        if (baseUrl != null) { // if a base URL is specified use that one
+            super.fixRelativeUris(originalDocument, element, scheme, prePath, baseUrl)
+        }
+        else {
+            super.fixRelativeUris(originalDocument, element, scheme, prePath, pathBase)
         }
     }
 
