@@ -9,6 +9,33 @@ import org.jsoup.parser.Tag
 
 open class PostprocessorExtended : Postprocessor() {
 
+    override fun postProcessContent(originalDocument: Document, articleContent: Element, articleUri: String, additionalClassesToPreserve: Collection<String>) {
+        // call before super.postProcessContent() so that afterwards relative urls are made absolute
+        makeLazyLoadingUrlsEagerLoading(articleContent)
+
+        super.postProcessContent(originalDocument, articleContent, articleUri, additionalClassesToPreserve)
+    }
+
+
+    protected open fun makeLazyLoadingUrlsEagerLoading(articleContent: Element) {
+        articleContent.select("img").forEach { imgElement ->
+            makeLazyLoadingUrlEagerLoading(imgElement, "src", listOf("data-src", "data-original", "data-actualsrc"))
+        }
+    }
+
+    protected open fun makeLazyLoadingUrlEagerLoading(element: Element, attributeToSet: String, lazyLoadingAttributes: List<String>) {
+        lazyLoadingAttributes.forEach { lazyLoadingAttributeName ->
+            val value = element.attr(lazyLoadingAttributeName)
+
+            if (value.isNotBlank()) { // .attr() by default returns an empty string
+                element.attr(attributeToSet, value)
+
+                return // only set first found lazy loading attribute
+            }
+        }
+    }
+
+
     override fun fixRelativeUris(originalDocument: Document, element: Element, scheme: String, prePath: String,
 								 pathBase: String) {
 
@@ -26,25 +53,6 @@ open class PostprocessorExtended : Postprocessor() {
         super.fixRelativeImageUris(element, scheme, prePath, pathBase)
 
         fixAmpImageUris(element)
-    }
-
-    override fun fixRelativeImageUri(img: Element, scheme: String, prePath: String, pathBase: String) {
-        val dataSrc = img.attr("data-src") // load data-src;
-        val dataOriginal = img.attr("data-original")
-        val dataActualSrc = img.attr("data-actualsrc")
-
-        if(dataSrc.isNotBlank()) {
-            img.attr("src", toAbsoluteURI(dataSrc, scheme, prePath, pathBase))
-        }
-        else if(dataOriginal.isNotBlank()) {
-            img.attr("src", toAbsoluteURI(dataOriginal, scheme, prePath, pathBase))
-        }
-        else if(dataActualSrc.isNotBlank()) {
-            img.attr("src", toAbsoluteURI(dataActualSrc, scheme, prePath, pathBase))
-        }
-        else {
-            super.fixRelativeImageUri(img, scheme, prePath, pathBase)
-        }
     }
 
     protected open fun fixAmpImageUris(element: Element) {
