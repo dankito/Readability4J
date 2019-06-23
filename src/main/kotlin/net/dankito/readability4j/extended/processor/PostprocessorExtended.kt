@@ -19,7 +19,8 @@ open class PostprocessorExtended : Postprocessor() {
 
     protected open fun makeLazyLoadingUrlsEagerLoading(articleContent: Element) {
         articleContent.select("img").forEach { imgElement ->
-            makeLazyLoadingUrlEagerLoading(imgElement, "src", listOf("data-src", "data-original", "data-actualsrc"))
+            makeLazyLoadingUrlEagerLoading(imgElement, "src",
+                    listOf("data-src", "data-original", "data-actualsrc", "data-lazy-src", "data-delayed-url", "data-li-src"))
         }
     }
 
