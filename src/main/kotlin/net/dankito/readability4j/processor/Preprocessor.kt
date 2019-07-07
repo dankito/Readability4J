@@ -24,6 +24,7 @@ open class Preprocessor(protected val regEx: RegExUtil = RegExUtil()) : Processo
         log.debug("Starting to prepare document")
 
         removeScripts(document)
+        removeNoscripts(document);
 
         removeStyles(document)
 
@@ -43,10 +44,9 @@ open class Preprocessor(protected val regEx: RegExUtil = RegExUtil()) : Processo
             scriptNode.removeAttr("src")
             true
         }
-//        element.getElementsByTag("script").forEach { script ->
-//            printAndRemove(log, script, "removeScripts('script')")
-//        }
+    }
 
+    protected open fun removeNoscripts(document: Document) {
         document.getElementsByTag("noscript").forEach { noscript ->
             if(shouldKeepImageInNoscriptElement(document, noscript)) { // TODO: this is not in Mozilla's Readability
                 noscript.unwrap()
