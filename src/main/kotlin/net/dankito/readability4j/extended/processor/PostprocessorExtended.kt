@@ -10,7 +10,7 @@ import org.jsoup.parser.Tag
 open class PostprocessorExtended : Postprocessor() {
 
     override fun postProcessContent(originalDocument: Document, articleContent: Element, articleUri: String, additionalClassesToPreserve: Collection<String>) {
-        // call before super.postProcessContent() so that afterwards relative urls are made absolute
+        // call these methods before super.postProcessContent() so that afterwards relative urls are made absolute
         makeLazyLoadingUrlsEagerLoading(articleContent)
 
         fixAmpImageUris(articleContent)
@@ -22,7 +22,8 @@ open class PostprocessorExtended : Postprocessor() {
     protected open fun makeLazyLoadingUrlsEagerLoading(articleContent: Element) {
         articleContent.select("img").forEach { imgElement ->
             makeLazyLoadingUrlEagerLoading(imgElement, "src",
-                    listOf("data-src", "data-original", "data-actualsrc", "data-lazy-src", "data-delayed-url", "data-li-src"))
+                    listOf("data-src", "data-original", "data-actualsrc", "data-lazy-src", "data-delayed-url",
+                            "data-li-src", "data-pagespeed-lazy-src"))
         }
     }
 
