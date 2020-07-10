@@ -83,7 +83,7 @@ open class Article(
         fun getContentWithEncoding(encoding: String): String? {
                 content?.let { content ->
                         return "<html>\n  <head>\n    <meta charset=\"$encoding\"/>\n  </head>\n  <body>\n    " +
-                                "$content\n  </body>\n<html>"
+                                "$content\n  </body>\n</html>"
                 }
 
                 return null
