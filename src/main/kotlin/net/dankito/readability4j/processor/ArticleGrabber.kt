@@ -8,6 +8,7 @@ import net.dankito.readability4j.util.RegExUtil
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
+import org.jsoup.select.Elements
 import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.collections.ArrayList
@@ -666,9 +667,10 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
 
         val siblingScoreThreshold = Math.max(10.0, topCandidateReadability.contentScore * 0.2)
         // Keep potential top candidate's parent node to try to get text direction of it later.
-        val parentOfTopCandidate = topCandidate.parent()
+        val parentOfTopCandidate = topCandidate.parent() // parentOfTopCandidate may is null, see issue #12
+        val siblings = parentOfTopCandidate?.children() ?: Elements()
 
-        ArrayList(parentOfTopCandidate.children()).forEach { sibling -> // make a copy of children as the may get modified below -> we can get rid of s -= 1 sl -= 1 compared to original source
+        ArrayList(siblings).forEach { sibling -> // make a copy of children as the may get modified below -> we can get rid of s -= 1 sl -= 1 compared to original source
             var append = false
 
             val siblingReadability = getReadabilityObject(sibling)

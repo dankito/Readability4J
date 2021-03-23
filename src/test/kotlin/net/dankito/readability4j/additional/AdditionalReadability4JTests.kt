@@ -23,6 +23,11 @@ open class AdditionalReadability4JTests : Readability4JTestBase() {
     }
 
     @Test
+    fun testAndroidDevelopersBlog() {
+        testPage("http://feeds.feedburner.com/blogspot/hsDu", "android-developers-blog")
+    }
+
+    @Test
     fun testBento1() {
         testPage("http://www.bento.de/haha/jamaika-aus-hier-sind-exklusiv-die-satirischen-fdp-wahlplakate-fuer-die-neuwahlen-1876078/", "bento-1")
     }
