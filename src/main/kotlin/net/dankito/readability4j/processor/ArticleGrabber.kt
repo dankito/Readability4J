@@ -749,7 +749,6 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
         this.cleanConditionally(articleContent, "fieldset", options)
         this.clean(articleContent, "object")
         this.clean(articleContent, "embed")
-        this.clean(articleContent, "h1")
         this.clean(articleContent, "footer")
         this.clean(articleContent, "link")
 
