@@ -1,5 +1,5 @@
 group 'net.dankito.readability4j'
-version '1.0.6'
+version '1.0.7-SNAPSHOT'
 def mavenArtifactId = "readability4j"
 
 buildscript {
