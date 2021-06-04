@@ -10,13 +10,23 @@ import net.dankito.readability4j.util.RegExUtil
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
+import org.jsoup.select.Evaluator
 import org.slf4j.LoggerFactory
+import kotlin.math.sqrt
 
 
 open class Readability4J {
 
     companion object {
         private val log = LoggerFactory.getLogger(Readability4J::class.java)
+
+        var REGEXPS = mapOf(
+            // NOTE: These two regular expressions are duplicated in
+            // Readability.js. Please keep both copies in sync.
+            "unlikelyCandidates" to  "/-ad-|ai2html|banner|breadcrumbs|combx|comment|community|cover-wrap|disqus|extra|footer|gdpr|header|legends|menu|related|remark|replies|rss|shoutbox|sidebar|skyscraper|social|sponsor|supplemental|ad-break|agegate|pagination|pager|popup|yom-remote/i".toRegex(),
+            "okMaybeItsACandidate" to "/and|article|body|column|content|main|shadow/i".toRegex()
+        );
     }
 
 
@@ -106,10 +116,53 @@ open class Readability4J {
 
             article.articleContent = articleContent
         }
-        
+
         setArticleMetadata(article, metadata, articleContent)
 
         return article
+    }
+
+    fun isProbablyReaderable() : Boolean {
+        val paragraphNodes = document.select("p")
+        val preNodes = document.select("pre")
+        val nodes = Elements()
+        nodes.addAll(paragraphNodes);
+        nodes.addAll(preNodes);
+
+        val brNodes = document.select("div > br")
+
+        if(brNodes.isNotEmpty()) {
+            brNodes.forEach { brNode ->
+                brNode.parent()?.let {
+                    nodes.add(it)
+                }
+            }
+        }
+
+        var score = 0.0
+        nodes.forEach { node ->
+
+            val matchString = node.className() + " " + node.id();
+            if (REGEXPS["unlikelyCandidates"]?.matches(matchString) == true &&
+                REGEXPS["okMaybeItsACandidate"]?.matches(matchString) == false) {
+                return false;
+            }
+
+            if(nodes.select("li p").isNotEmpty()) {
+                return false
+            }
+
+            val textContentLength = node.text().trim().length;
+            if (textContentLength < options.characterThreshold) {
+                return false;
+            }
+
+            score += sqrt((textContentLength - options.characterThreshold).toDouble());
+        }
+
+
+
+        return score >= options.minAccumulatedScore
     }
 
     private fun setArticleMetadata(article: Article, metadata: ArticleMetadata, articleContent: Element?) {
