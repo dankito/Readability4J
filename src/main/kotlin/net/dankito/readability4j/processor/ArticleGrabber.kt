@@ -1114,14 +1114,14 @@ open class ArticleGrabber(protected val options: ReadabilityOptions, protected v
     }
 
     protected open fun getTextDirection(topCandidate: Element, doc: Document) {
-        val ancestors = Arrays.asList<Element>(topCandidate.parent(), topCandidate).toMutableSet()
+        val ancestors = mutableSetOf(topCandidate.parent(), topCandidate)
         ancestors.addAll(getNodeAncestors(topCandidate.parent()))
         ancestors.add(doc.body())
         ancestors.add(doc.selectFirst("html")) // needed as dir is often set on html tag
 
-        ancestors.forEach { ancestor ->
+        ancestors.filterNotNull().forEach { ancestor ->
             val articleDir = ancestor.attr("dir")
-            if(articleDir.isNotBlank()) {
+            if (articleDir.isNotBlank()) {
                 this.articleDir = articleDir
                 return
             }
