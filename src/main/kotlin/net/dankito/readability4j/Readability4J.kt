@@ -112,7 +112,7 @@ open class Readability4J {
         return article
     }
 
-    private fun setArticleMetadata(article: Article, metadata: ArticleMetadata, articleContent: Element?) {
+    protected open fun setArticleMetadata(article: Article, metadata: ArticleMetadata, articleContent: Element?) {
         // If we haven't found an excerpt in the article's metadata, use the article's
         // first paragraph as the excerpt. This is used for displaying a preview of
         // the article's content.
@@ -126,6 +126,7 @@ open class Readability4J {
         article.byline = if(metadata.byline.isNullOrBlank()) articleGrabber.articleByline else metadata.byline
         article.dir = articleGrabber.articleDir
         article.excerpt = metadata.excerpt
+        article.charset = metadata.charset
     }
 
 }

@@ -59,6 +59,8 @@ open class MetadataParser(protected val regEx: RegExUtil = RegExUtil()): Process
                             ?: ""
         }
 
+        metadata.charset = document.charset()?.name()
+
         return metadata
     }
 
