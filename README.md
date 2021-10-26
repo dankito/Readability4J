@@ -14,7 +14,7 @@ As it‘s compatible with Mozilla‘s Readability.js it produces exact the same 
 Gradle:
 ```
 dependencies {
-  compile 'net.dankito.readability4j:readability4j:1.0.3'
+  compile 'net.dankito.readability4j:readability4j:1.0.8'
 }
 ```
 
@@ -23,7 +23,7 @@ Maven:
 <dependency>
    <groupId>net.dankito.readability4j</groupId>
    <artifactId>readability4j</artifactId>
-   <version>1.0.3</version>
+   <version>1.0.8</version>
 </dependency>
 ```
 
@@ -80,6 +80,8 @@ So I added these convenience methods to Article class
 
 ```java
 String contentHtmlWithUtf8Encoding = article.getContentWithUtf8Encoding();
+// or (tries to apply site's charset, if set, or if not uses UTF-8 as fallback
+String contentWithDocumentsCharsetOrUtf8 = article.getContentWithDocumentsCharsetOrUtf8();
 // or
 String contentHtmlWithCustomEncoding = article.getContentWithEncoding("ISO-8859-1");
 ```
