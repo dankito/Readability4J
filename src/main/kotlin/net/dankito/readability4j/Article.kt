@@ -47,7 +47,7 @@ open class Article(
          * Returns the content wrapped in an <html> element with charset set to document's charset. Or if that is not set in UTF-8.
          * See [contentWithUtf8Encoding] for more details.
          */
-        val contentWithArticlesEncodingOrUtf8: String?
+        val contentWithDocumentsCharsetOrUtf8: String?
                 get() = getContentWithEncoding(charset ?: "utf-8")
 
         val textContent: String?
